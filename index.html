@@ -60,7 +60,7 @@
             width: 100%;
             aspect-ratio: 3 / 1;
             min-height: 180px;
-            background: #000;
+            background: #e6edf3;
         }
 
         .world-main-view,
@@ -73,6 +73,7 @@
             opacity: 1;
             visibility: visible;
             transition: opacity 0.18s ease;
+            z-index: 0;
         }
 
         .world-main-view.hidden {
@@ -93,6 +94,7 @@
             visibility: hidden;
             pointer-events: none;
             transition: opacity 0.18s ease;
+            z-index: 2;
         }
 
         .world-video-view.active {
@@ -105,8 +107,8 @@
             position: absolute;
             inset: 0;
             opacity: 0;
-            transition: opacity 0.12s ease;
-            background: #000;
+            transition: opacity 0.24s ease;
+            background: transparent;
         }
 
         .world-video-layer.active {
@@ -166,7 +168,7 @@
             </p>
 
             <div class="flex flex-wrap justify-center gap-3 md:gap-5">
-                <a href="https://junhong-3dv.github.io/depthfocus-project/#" class="btn-hover flex items-center justify-center gap-2 bg-gray-900 text-white px-6 md:px-8 py-3 rounded-full font-semibold text-sm shadow-lg w-full md:w-auto">
+                <a href="https://papers.pnu-cvsp.com/LivingWorld" class="btn-hover flex items-center justify-center gap-2 bg-gray-900 text-white px-6 md:px-8 py-3 rounded-full font-semibold text-sm shadow-lg w-full md:w-auto">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"></path>
                         <path d="M4.5 3.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zM4.5 6.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zM4.5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"></path>
@@ -182,7 +184,7 @@
                     <div id="world-main-view" class="world-main-view">
                         <img id="world-img" src="./src/img/louise_world.png" alt="World overview" class="block">
 
-                        <button id="world-play-btn" class="region-btn absolute" style="top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(255,255,255,0.5); border:1px solid rgba(209,213,219,0.7); color:#111; padding:6px 10px; border-radius:999px; font-family: 'Inter', sans-serif; font-weight: 600; z-index:20;">Click</button>
+                        <button id="world-play-btn" class="region-btn absolute" style="top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(255,255,255,0.5); border:1px solid rgba(209,213,219,0.7); color:#111; padding:6px 10px; border-radius:999px; font-family: 'Inter', sans-serif; font-weight: 600; z-index:1;">Click</button>
                     </div>
 
                     <div id="world-video-view" class="world-video-view">
@@ -719,7 +721,7 @@
                 </video>
             </div>
         </section>
-
+<!-- 
         <section class="mb-12">
             <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-900">Citation</h2>
             <div class="bg-gray-900 p-6 md:p-8 rounded-2xl shadow-xl relative group">
@@ -731,7 +733,7 @@
                 year={2026}
                 }</code></pre>
             </div>
-        </section>
+        </section> -->
 
     </div>
 
@@ -774,6 +776,16 @@
     if (worldMainView && worldVideoView && worldPlayBtn && worldBackBtn && worldZoomInVideo && worldMainVideo && worldZoomOutVideo) {
         let worldState = 'idle';
         const worldVideos = [worldZoomInVideo, worldMainVideo, worldZoomOutVideo];
+        const WORLD_FADE_MS = 240;
+        const WORLD_FRAME_WAIT_MS = 1200;
+        const WORLD_START_OFFSET = 0.03;
+
+        const worldMainSource = worldMainVideo.querySelector('source');
+        const worldMainSrc = worldMainSource ? worldMainSource.getAttribute('src') : '';
+        const worldZoomInSource = worldZoomInVideo.querySelector('source');
+        const worldZoomInSrc = worldZoomInSource ? worldZoomInSource.getAttribute('src') : '';
+        const worldZoomOutSource = worldZoomOutVideo.querySelector('source');
+        const worldZoomOutSrc = worldZoomOutSource ? worldZoomOutSource.getAttribute('src') : '';
 
         const safePlay = (video) => {
             const playPromise = video.play();
@@ -782,18 +794,151 @@
             }
         };
 
+        const waitForFirstFrame = (video, timeoutMs = WORLD_FRAME_WAIT_MS) =>
+            new Promise((resolve) => {
+                let done = false;
+                let timeoutId = null;
+                let frameRequestId = null;
+
+                const finish = () => {
+                    if (done) return;
+                    done = true;
+                    if (timeoutId) clearTimeout(timeoutId);
+                    video.removeEventListener('loadeddata', finish);
+                    video.removeEventListener('canplay', finish);
+                    video.removeEventListener('playing', finish);
+                    video.removeEventListener('timeupdate', finish);
+                    if (frameRequestId !== null && typeof video.cancelVideoFrameCallback === 'function') {
+                        video.cancelVideoFrameCallback(frameRequestId);
+                    }
+                    resolve();
+                };
+
+                timeoutId = window.setTimeout(finish, timeoutMs);
+
+                video.addEventListener('loadeddata', finish, { once: true });
+                video.addEventListener('canplay', finish, { once: true });
+                video.addEventListener('playing', finish, { once: true });
+                video.addEventListener('timeupdate', finish, { once: true });
+
+                if (typeof video.requestVideoFrameCallback === 'function') {
+                    frameRequestId = video.requestVideoFrameCallback(() => {
+                        finish();
+                    });
+                }
+
+                if (video.readyState >= 2 && video.currentTime > 0) {
+                    requestAnimationFrame(finish);
+                }
+            });
+
+        const waitForPlayableLoad = (video, timeoutMs = 4000) =>
+            new Promise((resolve) => {
+                if (video.readyState >= 3) {
+                    resolve();
+                    return;
+                }
+
+                let done = false;
+                let timeoutId = null;
+
+                const finish = () => {
+                    if (done) return;
+                    done = true;
+                    if (timeoutId) clearTimeout(timeoutId);
+                    video.removeEventListener('loadeddata', checkReady);
+                    video.removeEventListener('canplay', checkReady);
+                    video.removeEventListener('canplaythrough', checkReady);
+                    resolve();
+                };
+
+                const checkReady = () => {
+                    if (video.readyState >= 3) {
+                        finish();
+                    }
+                };
+
+                timeoutId = window.setTimeout(finish, timeoutMs);
+                video.addEventListener('loadeddata', checkReady);
+                video.addEventListener('canplay', checkReady);
+                video.addEventListener('canplaythrough', checkReady);
+            });
+
+        const wait = (ms, callback) => {
+            window.setTimeout(callback, ms);
+        };
+
+        const ensureMainLoaded = () => {
+            if (!worldMainSource || !worldMainSrc) return;
+            if (!worldMainSource.getAttribute('src')) {
+                worldMainSource.setAttribute('src', worldMainSrc);
+                worldMainVideo.load();
+            }
+        };
+
+        const ensureZoomInLoaded = () => {
+            if (!worldZoomInSource || !worldZoomInSrc) return;
+            if (!worldZoomInSource.getAttribute('src')) {
+                worldZoomInSource.setAttribute('src', worldZoomInSrc);
+                worldZoomInVideo.load();
+            }
+        };
+
+        const ensureZoomOutLoaded = () => {
+            if (!worldZoomOutSource || !worldZoomOutSrc) return;
+            if (!worldZoomOutSource.getAttribute('src')) {
+                worldZoomOutSource.setAttribute('src', worldZoomOutSrc);
+                worldZoomOutVideo.load();
+            }
+        };
+
+        const unloadMainVideo = () => {
+            worldMainVideo.pause();
+            worldMainVideo.onended = null;
+            worldMainVideo.classList.remove('active');
+            if (!worldMainSource) return;
+            if (worldMainSource.getAttribute('src')) {
+                worldMainSource.removeAttribute('src');
+                worldMainVideo.load();
+            }
+        };
+
+        const unloadZoomInVideo = () => {
+            worldZoomInVideo.pause();
+            worldZoomInVideo.onended = null;
+            worldZoomInVideo.classList.remove('active');
+            if (!worldZoomInSource) return;
+            if (worldZoomInSource.getAttribute('src')) {
+                worldZoomInSource.removeAttribute('src');
+                worldZoomInVideo.load();
+            }
+        };
+
+        const unloadZoomOutVideo = () => {
+            worldZoomOutVideo.pause();
+            worldZoomOutVideo.onended = null;
+            worldZoomOutVideo.classList.remove('active');
+            if (!worldZoomOutSource) return;
+            if (worldZoomOutSource.getAttribute('src')) {
+                worldZoomOutSource.removeAttribute('src');
+                worldZoomOutVideo.load();
+            }
+        };
+
         const resetVideo = (video) => {
             video.pause();
             video.onended = null;
             video.classList.remove('active');
-            try {
-                video.currentTime = 0;
-            } catch (error) {
-            }
+            setTimeout(() => { try { video.currentTime = 0; } catch (e) {} }, 150);
         };
 
         const showMainView = () => {
-            worldVideos.forEach(resetVideo);
+            worldVideos.forEach((v) => {
+                v.pause();
+                v.onended = null;
+                v.classList.remove('active');
+                try { v.currentTime = 0; } catch (e) {}
+            });
             worldVideoView.classList.remove('active');
             worldMainView.classList.remove('hidden');
             worldPlayBtn.style.display = '';
@@ -802,48 +947,95 @@
         };
 
         const showVideoView = () => {
-            worldMainView.classList.add('hidden');
             worldVideoView.classList.add('active');
             worldPlayBtn.style.display = 'none';
             worldBackBtn.style.display = 'block';
         };
 
-        const activateVideo = (targetVideo) => {
+        const stopNonTargetVideos = (targetVideo) => {
             worldVideos.forEach((video) => {
-                if (video === targetVideo) {
-                    video.classList.add('active');
-                    return;
+                if (video !== targetVideo) {
+                    video.pause();
+                    video.onended = null;
+                    video.classList.remove('active');
+                    try { video.currentTime = 0; } catch (e) {}
                 }
-
-                resetVideo(video);
             });
         };
 
-        const playWorldClip = (video, loop, onEnded) => {
-            activateVideo(video);
+        const fadeInVideo = (video, zIndex) => {
+            if (typeof zIndex === 'number') {
+                video.style.zIndex = String(zIndex);
+            }
+            video.classList.add('active');
+        };
+
+        const fadeOutVideo = (video, onDone) => {
+            video.classList.remove('active');
+            wait(WORLD_FADE_MS, () => {
+                if (typeof onDone === 'function') onDone();
+            });
+        };
+
+        const playWorldClip = (video, loop, onEnded, zIndex) => {
             video.loop = loop;
             video.onended = onEnded;
             try {
-                video.currentTime = 0;
+                video.currentTime = WORLD_START_OFFSET;
+            } catch (error) {
+            }
+            safePlay(video);
+            waitForFirstFrame(video).then(() => {
+                if (!video.paused || loop) {
+                    fadeInVideo(video, zIndex);
+                }
+            });
+        };
+
+        const startWorldClipNow = (video, loop, onEnded) => {
+            video.loop = loop;
+            video.onended = onEnded;
+            try {
+                video.currentTime = WORLD_START_OFFSET;
             } catch (error) {
             }
             safePlay(video);
         };
 
-        worldVideos.forEach((video) => {
-            video.load();
-        });
+        worldZoomInVideo.load();
+        unloadZoomOutVideo();
 
         worldPlayBtn.addEventListener('click', () => {
             if (worldState !== 'idle') return;
 
             showVideoView();
             worldState = 'zoom-in';
+            stopNonTargetVideos(worldZoomInVideo);
 
-            playWorldClip(worldZoomInVideo, false, () => {
+            // Requested sequence:
+            // 1) zoom-in fade-in, 2) start zoom-in playback + load louise loop,
+            // 3) zoom-in ends -> fade-out, 4) after fade-out start louise loop.
+            fadeInVideo(worldZoomInVideo, 5);
+            wait(WORLD_FADE_MS, () => {
                 if (worldState !== 'zoom-in') return;
-                worldState = 'main';
-                playWorldClip(worldMainVideo, true, null);
+
+                ensureZoomInLoaded();
+                ensureMainLoaded();
+                worldMainVideo.style.zIndex = '3';
+
+                startWorldClipNow(worldZoomInVideo, false, () => {
+                    if (worldState !== 'zoom-in') return;
+                    waitForPlayableLoad(worldMainVideo).then(() => {
+                        if (worldState !== 'zoom-in') return;
+                        fadeOutVideo(worldZoomInVideo, () => {
+                            if (worldState !== 'zoom-in') return;
+                            unloadZoomInVideo();
+                            worldState = 'main';
+                            fadeInVideo(worldMainVideo, 3);
+                            startWorldClipNow(worldMainVideo, true, null);
+                        });
+                    });
+                });
             });
         });
 
@@ -851,9 +1043,25 @@
             if (worldState === 'idle' || worldState === 'zoom-out') return;
 
             worldState = 'zoom-out';
-            playWorldClip(worldZoomOutVideo, false, () => {
+
+            // Requested sequence:
+            // 1) immediate zoom-out fade-in, 2) after fade-in start zoom-out + unload louise,
+            // 3) zoom-out ends -> fade-out.
+            ensureZoomOutLoaded();
+            fadeInVideo(worldZoomOutVideo, 4);
+            wait(WORLD_FADE_MS, () => {
                 if (worldState !== 'zoom-out') return;
-                showMainView();
+
+                unloadMainVideo();
+                startWorldClipNow(worldZoomOutVideo, false, () => {
+                    if (worldState !== 'zoom-out') return;
+                    fadeOutVideo(worldZoomOutVideo, () => {
+                        if (worldState !== 'zoom-out') return;
+                        unloadZoomOutVideo();
+                        worldMainView.classList.remove('hidden');
+                        showMainView();
+                    });
+                });
             });
         });
     }
