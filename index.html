@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://junhong-3dv.github.io/depthfocus-project/ -->
+<html lang="en" class="scroll-smooth"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LivingWorld</title>
+    <script src="./src/saved_resource"></script>
+    <link href="./src/css2" rel="stylesheet">
+    <link rel="stylesheet" href="./src/video-gallery.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #0ea5e9, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .btn-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .cursor-grab { cursor: grab; }
+        .cursor-grabbing { cursor: grabbing !important; }
+        .dot-transition { transition: all 0.3s ease; }
+
+        .mobile-clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) {
+            .mobile-clamp {
+                -webkit-line-clamp: unset;
+                display: block;
+            }
+        }
+
+        .world-teaser-stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 1;
+            min-height: 180px;
+            background: #000;
+        }
+
+        .world-main-view,
+        .world-video-view {
+            position: absolute;
+            inset: 0;
+        }
+
+        .world-main-view {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.18s ease;
+        }
+
+        .world-main-view.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .world-main-view img,
+        .world-video-layer {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .world-video-view {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.18s ease;
+        }
+
+        .world-video-view.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .world-video-layer {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.12s ease;
+            background: #000;
+        }
+
+        .world-video-layer.active {
+            opacity: 1;
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.right-4{right:1rem}.top-0{top:0px}.top-4{top:1rem}.top-full{top:100%}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-6{margin-top:1.5rem;margin-bottom:1.5rem}.mb-1{margin-bottom:0.25rem}.mb-12{margin-bottom:3rem}.mb-16{margin-bottom:4rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mt-2{margin-top:0.5rem}.mt-8{margin-top:2rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-2{height:0.5rem}.h-6{height:1.5rem}.h-auto{height:auto}.w-2{width:0.5rem}.w-48{width:12rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-\[92\%\]{width:92%}.w-full{width:100%}.max-w-4xl{max-width:56rem}.max-w-5xl{max-width:64rem}.max-w-full{max-width:100%}.shrink-0{flex-shrink:0}.cursor-grab{cursor:grab}.snap-x{scroll-snap-type:x var(--tw-scroll-snap-strictness)}.snap-mandatory{--tw-scroll-snap-strictness:mandatory}.snap-center{scroll-snap-align:center}.scroll-mt-24{scroll-margin-top:6rem}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.gap-x-4{column-gap:1rem}.gap-y-2{row-gap:0.5rem}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.scroll-smooth{scroll-behavior:smooth}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-indigo-50{--tw-border-opacity:1;border-color:rgb(238 242 255 / var(--tw-border-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-indigo-50{--tw-gradient-from:#eef2ff var(--tw-gradient-from-position);--tw-gradient-to:rgb(238 242 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-purple-50{--tw-gradient-to:#faf5ff var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.object-cover{object-fit:cover}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-16{padding-bottom:4rem}.pb-2{padding-bottom:0.5rem}.pb-4{padding-bottom:1rem}.pt-24{padding-top:6rem}.text-center{text-align:center}.text-right{text-align:right}.text-justify{text-align:justify}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-0.025em}.tracking-wide{letter-spacing:0.025em}.tracking-widest{letter-spacing:0.1em}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-indigo-500{--tw-text-opacity:1;color:rgb(99 102 241 / var(--tw-text-opacity, 1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-100{opacity:1}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.hover\:bg-gray-600:hover{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.hover\:bg-indigo-400:hover{--tw-bg-opacity:1;background-color:rgb(129 140 248 / var(--tw-bg-opacity, 1))}.hover\:text-indigo-600:hover{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.hover\:text-indigo-800:hover{--tw-text-opacity:1;color:rgb(55 48 163 / var(--tw-text-opacity, 1))}.focus\:opacity-100:focus{opacity:1}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}@media (min-width: 768px){.md\:static{position:static}.md\:mb-10{margin-bottom:2.5rem}.md\:mb-12{margin-bottom:3rem}.md\:mb-16{margin-bottom:4rem}.md\:mb-2{margin-bottom:0.5rem}.md\:mb-24{margin-bottom:6rem}.md\:mb-4{margin-bottom:1rem}.md\:mb-5{margin-bottom:1.25rem}.md\:mb-6{margin-bottom:1.5rem}.md\:mb-8{margin-bottom:2rem}.md\:mt-0{margin-top:0px}.md\:mt-10{margin-top:2.5rem}.md\:mt-4{margin-top:1rem}.md\:block{display:block}.md\:flex{display:flex}.md\:hidden{display:none}.md\:h-2\.5{height:0.625rem}.md\:w-1\/2{width:50%}.md\:w-2\.5{width:0.625rem}.md\:w-6{width:1.5rem}.md\:w-\[70\%\]{width:70%}.md\:w-auto{width:auto}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:gap-10{gap:2.5rem}.md\:gap-12{gap:3rem}.md\:gap-2{gap:0.5rem}.md\:gap-5{gap:1.25rem}.md\:gap-6{gap:1.5rem}.md\:gap-x-6{column-gap:1.5rem}.md\:rounded-2xl{border-radius:1rem}.md\:rounded-3xl{border-radius:1.5rem}.md\:rounded-xl{border-radius:0.75rem}.md\:border-none{border-style:none}.md\:bg-transparent{background-color:transparent}.md\:p-0{padding:0px}.md\:p-10{padding:2.5rem}.md\:p-4{padding:1rem}.md\:p-5{padding:1.25rem}.md\:p-6{padding:1.5rem}.md\:p-8{padding:2rem}.md\:px-10{padding-left:2.5rem;padding-right:2.5rem}.md\:px-4{padding-left:1rem;padding-right:1rem}.md\:px-6{padding-left:1.5rem;padding-right:1.5rem}.md\:px-8{padding-left:2rem;padding-right:2rem}.md\:py-3{padding-top:0.75rem;padding-bottom:0.75rem}.md\:py-4{padding-top:1rem;padding-bottom:1rem}.md\:py-8{padding-top:2rem;padding-bottom:2rem}.md\:pb-24{padding-bottom:6rem}.md\:pt-32{padding-top:8rem}.md\:text-left{text-align:left}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\:text-6xl{font-size:3.75rem;line-height:1}.md\:text-base{font-size:1rem;line-height:1.5rem}.md\:text-lg{font-size:1.125rem;line-height:1.75rem}.md\:text-sm{font-size:0.875rem;line-height:1.25rem}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}.md\:opacity-0{opacity:0}.md\:shadow-none{--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.group:hover .md\:group-hover\:opacity-100{opacity:1}}@media (min-width: 1024px){.lg\:w-\[60\%\]{width:60%}}</style></head>
+<body class="antialiased leading-relaxed tracking-wide relative">
+
+    <nav class="fixed top-0 w-full z-50 glass-card px-4 md:px-6 py-3 md:py-4 flex justify-between items-center transition-all duration-300 relative">
+        <div class="font-bold text-base md:text-lg tracking-tight text-gray-800">LivingWorld</div>
+
+        <button onclick="toggleMobileMenu()" class="md:hidden text-gray-600 hover:text-indigo-600 focus:outline-none transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+
+        <!-- <div id="nav-menu" class="hidden absolute top-full right-4 mt-2 w-48 p-5 glass-card rounded-2xl flex-col gap-4 shadow-xl md:static md:flex md:w-auto md:p-0 md:bg-transparent md:border-none md:shadow-none md:flex-row md:gap-6 text-sm font-semibold text-gray-600 md:mt-0 transition-all z-50">
+            <a href="https://junhong-3dv.github.io/depthfocus-project/#abstract" class="hover:text-indigo-600 transition text-right md:text-left" onclick="closeMobileMenu()">Abstract</a>
+            <a href="https://junhong-3dv.github.io/depthfocus-project/#method" class="hover:text-indigo-600 transition text-right md:text-left" onclick="closeMobileMenu()">Method</a>
+            <a href="https://junhong-3dv.github.io/depthfocus-project/#dataset" class="hover:text-indigo-600 transition text-right md:text-left" onclick="closeMobileMenu()">Dataset</a>
+            <a href="https://junhong-3dv.github.io/depthfocus-project/#quantitative" class="hover:text-indigo-600 transition text-right md:text-left" onclick="closeMobileMenu()">Benchmarks</a>
+            <a href="https://junhong-3dv.github.io/depthfocus-project/#steerable-transitions" class="hover:text-indigo-600 transition text-right md:text-left" onclick="closeMobileMenu()">Results</a>
+        </div> -->
+    </nav>
+
+    <div class="container mx-auto max-w-5xl px-4 md:px-6 pt-24 md:pt-32 pb-16 md:pb-24">
+
+        <header class="text-center mb-12 md:mb-16">
+            <h1 class="text-3xl md:text-6xl font-extrabold mb-6 md:mb-8 tracking-tight gradient-text py-2 leading-tight">
+                LivingWorld: Interactive 4D World Generation with Environmental Dynamics
+            </h1>
+
+            <div class="text-base md:text-xl flex flex-wrap justify-center gap-x-4 md:gap-x-6 gap-y-2 mb-2 font-medium text-gray-800">
+    
+                <span>
+                    <a href="https://www.pnu-cvsp.com/members/hyeong-ju" class="custom-link" style="color: rgb(78, 173, 211);">
+                        Hyeongju Mun
+                    </a><sup>1*</sup>
+                </span>
+
+                <span>
+                    <a href="https://www.pnu-cvsp.com/members/inhwan" class="custom-link" style="color: rgb(78, 173, 211);">
+                        In-Hwan Jin
+                    </a><sup>1*</sup>
+                </span>
+
+                <span>
+                    <a href="https://www.pnu-cvsp.com/members/sohyeong" class="custom-link" style="color: rgb(78, 173, 211);">
+                        Sohyeong Kim
+                    </a><sup>1</sup>
+                </span>
+
+                <span>
+                    <a href="https://www.pnu-cvsp.com/prof" class="custom-link" style="color: rgb(78, 173, 211);">
+                        Kyeongbo Kong
+                    </a><sup>1†</sup>
+                </span>
+
+            </div>
+            <p class="text-base md:text-lg text-gray-500 mb-8 md:mb-10">
+                <sup>1</sup>Pusan National University<br>
+                <span class="text-sm md:text-base italic"><sup>*</sup>Equal Contribution     <sup>†</sup>Corresponding Author</span> 
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-3 md:gap-5">
+                <a href="https://junhong-3dv.github.io/depthfocus-project/#" class="btn-hover flex items-center justify-center gap-2 bg-gray-900 text-white px-6 md:px-8 py-3 rounded-full font-semibold text-sm shadow-lg w-full md:w-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"></path>
+                        <path d="M4.5 3.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zM4.5 6.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zM4.5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"></path>
+                    </svg>
+                    Paper
+                </a>
+                <!-- <a href="https://junhong-3dv.github.io/depthfocus-project/#" class="btn-hover flex items-center justify-center gap-2 bg-white text-gray-900 border border-gray-200 px-6 md:px-8 py-3 rounded-full font-semibold text-sm shadow-sm w-full md:w-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"></path>
+                        <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"></path>
+                    </svg>
+                    Supp
+                </a> -->
+            </div>
+        </header>
+
+        <section id="world-interactive" class="mb-8 md:mb-12">
+            <div class="w-full bg-white rounded-2xl md:rounded-3xl mb-4 md:mb-6 shadow-lg border border-gray-100 p-3 md:p-5">
+                <div id="world-teaser-stage" class="world-teaser-stage overflow-hidden rounded-xl" style="border:1px solid #e2e8f0;">
+                    <div id="world-main-view" class="world-main-view">
+                        <img id="world-img" src="./src/img/louise_world.png" alt="World overview" class="block">
+
+                        <button id="world-play-btn" class="region-btn absolute" style="top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(255,255,255,0.5); border:1px solid rgba(209,213,219,0.7); color:#111; padding:6px 10px; border-radius:999px; font-family: 'Inter', sans-serif; font-weight: 600; z-index:20;">Click</button>
+                    </div>
+
+                    <div id="world-video-view" class="world-video-view">
+                        <button id="world-back-btn" class="absolute" style="font-family: 'Inter', sans-serif; z-index:30; display:none; top:12px; right:12px; padding:4px 12px; background:white; color:#111; border-radius:999px; font-size:0.75rem; font-weight:600; box-shadow:0 1px 4px rgba(0,0,0,0.15); border:none; cursor:pointer;">Back</button>
+
+                        <video id="world-zoom-in-video" class="world-video-layer" playsinline muted preload="auto">
+                            <source src="./src/videos/teaser/zoom_in_louise.mp4" type="video/mp4">
+                        </video>
+                        <video id="world-main-video" class="world-video-layer" playsinline muted preload="auto" loop>
+                            <source src="./src/videos/teaser/louise.mp4" type="video/mp4">
+                        </video>
+                        <video id="world-zoom-out-video" class="world-video-layer" playsinline muted preload="auto">
+                            <source src="./src/videos/teaser/zoom_out_louise.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-gray-700 text-sm md:text-base px-2 md:px-4 max-w-4xl mx-auto text-justify leading-relaxed">
+                <strong>Overview of LivingWorld.</strong> LivingWorld generates dynamic 4D scenes from a single image by progressively expanding the scene while maintaining globally coherent environmental dynamics. 
+                We demonstrate results with scene-scale motions such as water, clouds, and smoke, rendered under moving viewpoints. 
+                Our method preserves spatial and temporal consistency across views, enabling interactive and physically plausible 4D world generation.
+            </p>
+        </section>
+
+        
+
+        <section id="abstract" class="mb-16 md:mb-24 scroll-mt-24">
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl md:rounded-3xl px-6 py-6 md:px-10 md:py-8 shadow-sm border border-indigo-50">
+                <h2 class="text-2xl md:text-3xl font-extrabold mb-3 md:mb-5 text-center text-gray-900">Abstract</h2>
+                <p id="abstract-text" class="text-gray-700 text-sm md:text-base leading-relaxed text-justify mobile-clamp transition-all duration-300">
+                    We introduce LivingWorld, an interactive framework for generating 4D worlds with environmental dynamics from a single image. While recent advances in 3D scene generation enable large-scale environment creation, most approaches focus primarily on reconstructing static geometry, leaving scene-scale environmental dynamics such as clouds, water, or smoke largely unexplored.
+                    Modeling such dynamics is challenging because motion must remain coherent across an expanding scene while supporting low-latency user feedback.
+                    LivingWorld addresses this challenge by progressively constructing a globally coherent motion field as the scene expands.
+                    To maintain global consistency during expansion, we introduce a geometry-aware alignment module that resolves directional and scale ambiguities across views. We further represent motion using a compact hash-based motion field, enabling efficient querying and stable propagation of dynamics throughout the scene.
+                    This representation also supports bidirectional motion propagation during rendering, producing long and temporally coherent 4D sequences without relying on expensive video-based refinement. On a single RTX 5090 GPU, generating each new scene expansion step requires 9 seconds, followed by 3 seconds for motion alignment and motion field updates, enabling interactive 4D world generation with globally coherent environmental dynamics. Additional dynamic results are provided in the supplementary video.
+                <div class="text-center mt-2">
+                    <button id="read-more-btn" class="text-indigo-600 font-semibold text-sm md:hidden hover:text-indigo-800" onclick="toggleAbstract()">Read More</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="method" class="mb-16 md:mb-24 scroll-mt-24">
+
+                <!-- Title -->
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">
+                Method
+            </h2>
+
+            <!-- ================= Overview ================= -->
+            <div class="glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8 md:mb-12">
+
+                <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 text-center">
+                    Interactive 4D World Generation
+                </h3>
+
+                <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
+                    LivingWorld constructs a globally consistent motion field during scene expansion.
+                    Starting from a single image, we progressively expand the scene and estimate motion from user interactions.
+                    To ensure consistency across views, we introduce a geometry-aware alignment module that resolves directional and scale ambiguities.
+                    We further represent motion using a compact hash-based field, enabling efficient and stable propagation of dynamics.
+                    This allows temporally coherent and view-consistent 4D world generation.
+                </p>
+
+            </div>
+
+
+            <!-- ================= Pipeline ================= -->
+            <div class="glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8 md:mb-12">
+
+                <img src="./src/img/overallframe.png"
+                    alt="LivingWorld Pipeline"
+                    class="w-full h-auto object-contain rounded-xl">
+
+            </div>
+
+
+            <!-- ================= Alignment Module ================= -->
+            <div class="glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8 md:mb-12">
+
+                <div class="flex flex-col md:flex-row items-center gap-6">
+
+                    <!-- Image -->
+                    <div class="w-full md:w-1/2">
+                        <img src="./src/img/align.png"
+                            alt="Geometry-aware Alignment"
+                            class="w-full h-auto object-contain rounded-xl">
+                    </div>
+
+                    <!-- Text -->
+                    <div class="w-full md:w-1/2">
+
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3">
+                            Geometry-Aware Alignment
+                        </h3>
+
+                        <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
+                            Our alignment module resolves directional and scale ambiguities across views.
+                            By matching overlapping regions between newly expanded and existing scenes,
+                            we enforce globally consistent motion during scene growth.
+                            This enables stable integration of motion across the entire scene.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= Motion Field ================= -->
+            <div class="glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl">
+
+                <div class="flex flex-col md:flex-row items-center gap-6">
+
+                    <!-- Image -->
+                    <div class="w-full md:w-1/2">
+                        <img src="./src/img/motion_field.png"
+                            alt="Hash-based Motion Field"
+                            class="w-full h-auto object-contain rounded-xl">
+                    </div>
+
+                    <!-- Text -->
+                    <div class="w-full md:w-1/2">
+
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3">
+                            Hash-based Motion Field
+                        </h3>
+
+                        <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
+                            We represent motion as a continuous hash-based field,
+                            enabling efficient querying and stable propagation of dynamics.
+                            The field supports bidirectional motion integration,
+                            producing long and temporally coherent 4D sequences during rendering.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="hero is-small" id="results-section">
+            <div class="hero-body">
+                <div class="container">
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Results</h2>
+                    
+                    <figure class="image">
+                        <figcaption>
+                            WonderPlay generates dynamic 3D scenes from a single image and input actions. 
+                            It predicts the physical consequences of the input actions.
+                            Here, we present video results rendered with a moving camera, overlaid with action visualizations. 
+                        </figcaption>
+                    </figure>
+
+                    
+
+                    <!-- Scene buttons -->
+                    <div class="video-gallery-buttons" id="gallery-buttons-results">
+                        <button class="scene-button is-primary" data-video-index="0">
+                            <img src="./src/img/alpine.png" alt="Scene 1">
+                        </button>
+                        <button class="scene-button" data-video-index="1">
+                            <img src="./src/img/cloud11.png" alt="Scene 2">
+                        </button>
+                        <button class="scene-button" data-video-index="2">
+                            <img src="./src/img/como.png" alt="Scene 3">
+                        </button>
+                        <button class="scene-button" data-video-index="3">
+                            <img src="./src/img/como2.png" alt="Scene 4">
+                        </button>
+                        <button class="scene-button" data-video-index="4">
+                            <img src="./src/img/louise.png" alt="Scene 5">
+                        </button>
+                        <button class="scene-button" data-video-index="5">
+                            <img src="./src/img/patagonia.png" alt="Scene 6">
+                        </button>
+                        <button class="scene-button" data-video-index="6">
+                            <img src="./src/img/smoke_fire8.png" alt="Scene 7">
+                        </button>
+                        <button class="scene-button" data-video-index="7">
+                            <img src="./src/img/waterfall12.png" alt="Scene 8">
+                        </button>
+                    </div>
+
+                    <!-- Video gallery carousel -->
+                    <div class="video-gallery-carousel" id="gallery-carousel-results">
+
+                        <div class="video-gallery-item active">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source src="./src/videos/alpine.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/cloud.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/como.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/como2.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/louise.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/patagonia.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/smoke_fire.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/waterfall.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <br>
+        <br>
+        <br>
+        <section id="object-centric-motion" class="mb-16 md:mb-24 scroll-mt-24">
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Integration with Object-Centric Motion</h2>
+
+            <div class="flex flex-col gap-8 md:gap-12" style="align-items: center;">
+                <div class="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl flex flex-col" style="width: min(95vw, 640px);">
+                    <div class="rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-6 flex items-center justify-center mx-auto" style="background: transparent; border: none; box-shadow: none; width: 100%;">
+                        <video autoplay="" loop="" muted="" playsinline="" controls="" class="w-full max-w-full h-auto object-contain rounded-xl pointer-events-auto" style="width: 100%;">
+                            <source src="./src/videos/flag.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <!-- <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">Large-scale Synthetic Dataset</h3> -->
+                    <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
+                        While LivingWorld primarily models scene-scale environmental dynamics such as water, clouds, and smoke,
+                        it can also incorporate object-centric motion.
+                        Rather than representing all motion within a single field, we align object and environmental motions
+                        in world coordinates by enforcing consistent scale and spatial alignment.
+                        This allows independently modeled motions to be coherently integrated within the same scene,
+                        maintaining consistency across viewpoints and scene expansion.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- <section id="quantitative" class="mb-16 md:mb-24 scroll-mt-24">
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Comprehensive Benchmark Evaluation</h2>
+            <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-center glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl">
+                <div class="w-full md:w-1/2 bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex items-center justify-center p-2 md:p-4">
+                    <img src="./src/benchmark_radar.png" alt="Benchmark Radar Chart" class="max-w-full h-auto object-contain">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">Performance Comparison</h3>
+                    <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify mb-4">
+                        We evaluate DepthFocus using a standard single-layer benchmark protocol, measuring accuracy strictly on the first visible surface. While our model achieves leading performance on standard opaque datasets like Middlebury, its architectural advantages are most evident in see-through scenes.
+                    </p>
+                    <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
+                        Crucially, the performance margin over existing top-tier models becomes remarkably large in complex multi-layered environments. On datasets featuring severe depth ambiguities, namely Booster, LayeredFlow, and our custom dataset (Ours), DepthFocus demonstrates a substantial lead. This confirms the robustness of our condition-aware control in resolving transmissive layered geometry.
+                    </p>
+                </div>
+            </div>
+        </section> -->
+
+        <section class="hero is-small" id="comparison-section">
+            <div class="hero-body">
+                <div class="container">
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Comparisons with Video Generation Models</h2>
+                    
+                    <figure class="image">
+                        <figcaption>
+                            We compare our method with video generation models under identical camera motion prompts.
+                            While these models often suffer from inconsistent 3D geometry, unnatural motion dynamics, and limited camera controllability,
+                            our method maintains a coherent 3D representation with physically consistent dynamics and precise control over camera motion.
+                        </figcaption>
+                    </figure>
+
+                    <div class="human-study">
+                        <h3>Human Study (2AFC)</h3>
+                        <p class="study-desc">
+                            Values indicate the percentage of participants who preferred <strong>LivingWorld</strong> over each baseline.
+                        </p>
+
+                        <div class="study-grid">
+
+                            
+                            <div class="study-card">
+                                <h4>CogVideoX</h4>
+
+                                <div class="metric-row">
+                                    <div class="metric-label">Physics Plausibility</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill physics" style="width:78%;">78%</div>
+                                    </div>
+                                </div>
+
+                                <div class="metric-row">
+                                    <div class="metric-label">Motion Fidelity</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill motion" style="width:73%;">73%</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="study-card">
+                                <h4>Tora</h4>
+
+                                <div class="metric-row">
+                                    <div class="metric-label">Physics Plausibility</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill physics" style="width:75%;">75%</div>
+                                    </div>
+                                </div>
+
+                                <div class="metric-row">
+                                    <div class="metric-label">Motion Fidelity</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill motion" style="width:80%;">80%</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="study-card">
+                                <h4>Veo 3.1</h4>
+
+                                <div class="metric-row">
+                                    <div class="metric-label">Physics Plausibility</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill physics" style="width:72%;">72%</div>
+                                    </div>
+                                </div>
+
+                                <div class="metric-row">
+                                    <div class="metric-label">Motion Fidelity</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill motion" style="width:72%;">72%</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    
+
+                    <!-- Second row of buttons -->
+                    <div class="video-gallery-buttons" id="comparison-scene-buttons">
+                        <h3>Qualitative Comparison</h3>
+                        <br>
+                        <button class="scene-button is-primary" data-video-index="0">
+                            <img src="./src/img/alpine.png" alt="Scene 1">
+                        </button>
+                        <button class="scene-button" data-video-index="3">
+                            <img src="./src/img/como.png" alt="Scene 2">
+                        </button>
+                    </div>
+
+                    <div class="video-gallery-buttons" id="gallery-buttons-nvs">
+                        
+                        <button class="button is-two-line is-primary" data-video-index="0">
+                            Ours vs CogVideoX 
+                        </button>
+                        <button class="button is-two-line" data-video-index="1">
+                            Ours vs Tora
+                        </button>
+                        <button class="button is-two-line" data-video-index="2">
+                            Ours vs Veo3.1
+                        </button>
+
+                    </div>
+
+                    <div class="camera-prompt" style="display:inline-flex; align-items:center; gap:0.35em;">
+                        <img src="./src/img/trajectory.svg" alt="camera prompt icon" class="prompt-icon" style="width:8em; height:auto; display:inline-block; vertical-align:middle;">
+                        <span class="prompt-text">"Pan to the right"</span>
+                    </div>
+                    <br>
+
+                    <!-- Video gallery carousel with 20 items -->
+                    <div class="video-gallery-carousel" id="gallery-carousel-nvs">
+                        <div class="video-gallery-item active">
+
+                            <video preload="none" controls="" muted="" loop="" height="100%" autoplay="">
+                                <source src="./src/videos/alpine/cog_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">CogVideoX</div>
+                            </div>
+                        </div>
+                        <div class="video-gallery-item">
+                            <video preload="none" controls="" muted="" loop="" height="100%">
+                                <source src="./src/videos/alpine/Tora_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">Tora</div>
+                            </div>
+                        </div>
+                        <div class="video-gallery-item">
+                            <video preload="none" controls="" muted="" loop="" height="100%">
+                                <source src="./src/videos/alpine/veo_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">Veo3.1</div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <video preload="none" controls="" muted="" loop="" height="100%">
+                                <source data-src="./src/videos/como/cog_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">CogVideoX</div>
+                            </div>
+                        </div>
+                        <div class="video-gallery-item">
+                            <video preload="none" controls="" muted="" loop="" height="100%">
+                                <source data-src="./src/videos/como/Tora_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">Tora</div>
+                            </div>
+                        </div>
+                        <div class="video-gallery-item">
+                            <video preload="none" controls="" muted="" loop="" height="100%">
+                                <source data-src="./src/videos/como/veo_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">Veo3.1</div>
+                            </div>
+                        </div>
+
+             
+                    </div>
+                </div>
+            </div>
+        </section>
+        <br>
+        <br>
+
+        <!-- <section id="steerable-transitions" class="mb-16 md:mb-24 scroll-mt-24">
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">
+                Comparison with Video Generation Models
+            </h2>
+
+            <div class="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl mb-8 md:mb-12 max-w-4xl mx-auto">
+                <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify mb-3 md:mb-4">
+                    Select a scene below and compare our method against video generation baselines for the same input image.
+                </p>
+                <p class="text-center text-gray-500 text-sm md:text-base">
+                    Swipe, drag, or use the buttons to compare different methods within each scene.
+                </p>
+            </div>
+
+            <div id="scene-buttons" class="flex flex-wrap justify-center gap-2 md:gap-3 mb-6 md:mb-8"></div>
+
+            <div id="comparison-slider"
+                class="slider-container flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pb-4 hide-scrollbar px-2 md:px-4 cursor-grab"
+                style="scroll-padding: 1rem;">
+            </div>
+
+            <div class="flex justify-center items-center gap-1.5 md:gap-2 mt-2 md:mt-4" id="model-dots"></div>
+        </section> -->
+
+        <section id="gui-demo" class="mb-8 md:mb-12">
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">GUI Demo</h2>
+            <div class="w-full bg-white rounded-2xl md:rounded-3xl mb-4 md:mb-6 shadow-lg border border-gray-100 p-3 md:p-5 flex items-center justify-center">
+                <video autoplay loop muted playsinline class="w-full h-auto object-contain rounded-lg md:rounded-xl">
+                    <source src="./src/videos/GUI.mp4" type="video/mp4">
+                </video>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-900">Citation</h2>
+            <div class="bg-gray-900 p-6 md:p-8 rounded-2xl shadow-xl relative group">
+                <button onclick="copyBib()" id="copyBtn" class="absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded transition opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100">Copy</button>
+                <pre><code id="bibText" class="text-xs md:text-sm text-gray-300 font-mono leading-relaxed overflow-x-auto block">@inproceedings{min2026depthfocus,
+                title={DepthFocus: Controllable Depth Estimation for See-Through Scenes},
+                author={Min, Junhong and Kim, Jimin and Kim, Minwook and Min, Cheol-Hui and Jeon, Youngpil and Choi, Minyong},
+                booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+                year={2026}
+                }</code></pre>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('hidden');
+    }
+    function closeMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.add('hidden');
+    }
+    function toggleAbstract() {
+        const abstractContent = document.getElementById('abstract-content');
+        const toggleText = document.getElementById('toggle-text');
+        abstractContent.classList.toggle('expanded');
+        toggleText.textContent = abstractContent.classList.contains('expanded') ? 'Show less' : 'Show more';
+    }
+    function copyBib() {
+        const bib = document.getElementById('bibtex-content').innerText;
+        navigator.clipboard.writeText(bib).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            const original = btn.innerHTML;
+            btn.innerHTML = 'Copied!';
+            setTimeout(() => {
+                btn.innerHTML = original;
+            }, 1500);
+        });
+    }
+
+    // === world image <-> teaser video sequence ===
+    const worldMainView = document.getElementById('world-main-view');
+    const worldVideoView = document.getElementById('world-video-view');
+    const worldPlayBtn = document.getElementById('world-play-btn');
+    const worldBackBtn = document.getElementById('world-back-btn');
+    const worldZoomInVideo = document.getElementById('world-zoom-in-video');
+    const worldMainVideo = document.getElementById('world-main-video');
+    const worldZoomOutVideo = document.getElementById('world-zoom-out-video');
+
+    if (worldMainView && worldVideoView && worldPlayBtn && worldBackBtn && worldZoomInVideo && worldMainVideo && worldZoomOutVideo) {
+        let worldState = 'idle';
+        const worldVideos = [worldZoomInVideo, worldMainVideo, worldZoomOutVideo];
+
+        const safePlay = (video) => {
+            const playPromise = video.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {});
+            }
+        };
+
+        const resetVideo = (video) => {
+            video.pause();
+            video.onended = null;
+            video.classList.remove('active');
+            try {
+                video.currentTime = 0;
+            } catch (error) {
+            }
+        };
+
+        const showMainView = () => {
+            worldVideos.forEach(resetVideo);
+            worldVideoView.classList.remove('active');
+            worldMainView.classList.remove('hidden');
+            worldPlayBtn.style.display = '';
+            worldBackBtn.style.display = 'none';
+            worldState = 'idle';
+        };
+
+        const showVideoView = () => {
+            worldMainView.classList.add('hidden');
+            worldVideoView.classList.add('active');
+            worldPlayBtn.style.display = 'none';
+            worldBackBtn.style.display = 'block';
+        };
+
+        const activateVideo = (targetVideo) => {
+            worldVideos.forEach((video) => {
+                if (video === targetVideo) {
+                    video.classList.add('active');
+                    return;
+                }
+
+                resetVideo(video);
+            });
+        };
+
+        const playWorldClip = (video, loop, onEnded) => {
+            activateVideo(video);
+            video.loop = loop;
+            video.onended = onEnded;
+            try {
+                video.currentTime = 0;
+            } catch (error) {
+            }
+            safePlay(video);
+        };
+
+        worldVideos.forEach((video) => {
+            video.load();
+        });
+
+        worldPlayBtn.addEventListener('click', () => {
+            if (worldState !== 'idle') return;
+
+            showVideoView();
+            worldState = 'zoom-in';
+
+            playWorldClip(worldZoomInVideo, false, () => {
+                if (worldState !== 'zoom-in') return;
+                worldState = 'main';
+                playWorldClip(worldMainVideo, true, null);
+            });
+        });
+
+        worldBackBtn.addEventListener('click', () => {
+            if (worldState === 'idle' || worldState === 'zoom-out') return;
+
+            worldState = 'zoom-out';
+            playWorldClip(worldZoomOutVideo, false, () => {
+                if (worldState !== 'zoom-out') return;
+                showMainView();
+            });
+        });
+    }
+
+    /* ---------------------------
+    New per-scene comparison slider
+    ---------------------------- */
+    const scenes = [
+        {
+            name: "Scene 01",
+            slides: [
+                { title: "CogVideoX", video: "./src/videos/alpine/cog_ours.mp4", desc: "CogVideoX on Scene 01." },
+                { title: "Tora", video: "./src/videos/alpine/Tora_ours.mp4", desc: "Tora on Scene 01." },
+                { title: "Veo3.1", video: "./src/videos/alpine/veo_ours.mp4", desc: "Veo3.1 on Scene 01." }
+            ]
+        },
+        {
+            name: "Scene 02",
+            slides: [
+                { title: "CogVideoX", video: "./src/videos/como/cog_ours.mp4", desc: "CogVideoX on Scene 02." },
+                { title: "Tora", video: "./src/videos/como/Tora_ours.mp4", desc: "Tora on Scene 02." },
+                { title: "Veo3.1", video: "./src/videos/como/veo_ours.mp4", desc: "Veo3.1 on Scene 02." }
+            ]
+        }
+        // scene 10까지 계속 추가
+    ];
+
+    let currentScene = 0;
+    let currentSlide = 0;
+
+    const sceneButtonsEl = document.getElementById("scene-buttons");
+    const sliderEl = document.getElementById("comparison-slider");
+    const dotsEl = document.getElementById("model-dots");
+
+    function renderSceneButtons() {
+        sceneButtonsEl.innerHTML = "";
+
+        scenes.forEach((scene, index) => {
+            const btn = document.createElement("button");
+            btn.textContent = scene.name;
+            btn.className =
+                "px-4 py-2 rounded-full text-sm md:text-base font-semibold transition " +
+                (index === currentScene
+                    ? "bg-indigo-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-indigo-100");
+
+            btn.addEventListener("click", () => {
+                currentScene = index;
+                currentSlide = 0;
+                renderAll();
+            });
+
+            sceneButtonsEl.appendChild(btn);
+        });
+    }
+
+    function renderSlides() {
+        const selectedScene = scenes[currentScene];
+        sliderEl.innerHTML = "";
+
+        selectedScene.slides.forEach((slide) => {
+            const card = document.createElement("div");
+            card.className =
+                "slide-item snap-center shrink-0 w-[92%] md:w-[70%] lg:w-[60%] glass-card p-4 md:p-5 rounded-2xl md:rounded-3xl flex flex-col";
+
+            card.innerHTML = `
+                <div class="mb-4 md:mb-6 overflow-hidden rounded-lg md:rounded-xl border border-gray-100 shadow-sm bg-black flex justify-center items-center">
+                    <video autoplay loop muted playsinline class="w-full h-auto object-contain rounded-lg md:rounded-xl">
+                        <source src="${slide.video}" type="video/mp4">
+                    </video>
+                </div>
+                <div class="mt-auto text-center px-2 md:px-4 pb-2">
+                    <h4 class="text-lg md:text-xl text-gray-900 font-bold mb-1 md:mb-2">${selectedScene.name} · ${slide.title}</h4>
+                    <p class="text-xs md:text-sm text-gray-600">${slide.desc}</p>
+                </div>
+            `;
+
+            sliderEl.appendChild(card);
+        });
+
+        sliderEl.scrollTo({ left: 0, behavior: "auto" });
+    }
+
+    function renderDots() {
+        const selectedScene = scenes[currentScene];
+        dotsEl.innerHTML = "";
+
+        selectedScene.slides.forEach((slide, index) => {
+            const dot = document.createElement("button");
+            dot.textContent = slide.title;
+            dot.className =
+                "px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition " +
+                (index === currentSlide
+                    ? "bg-indigo-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-indigo-100");
+
+            dot.addEventListener("click", () => {
+                const slides = sliderEl.querySelectorAll(".slide-item");
+                if (!slides[index]) return;
+                slides[index].scrollIntoView({
+                    behavior: "smooth",
+                    inline: "center",
+                    block: "nearest"
+                });
+            });
+
+            dotsEl.appendChild(dot);
+        });
+    }
+
+    function updateCurrentSlideFromScroll() {
+        const slides = [...sliderEl.querySelectorAll(".slide-item")];
+        if (!slides.length) return;
+
+        const sliderCenter = sliderEl.scrollLeft + sliderEl.clientWidth / 2;
+
+        let closestIndex = 0;
+        let closestDistance = Infinity;
+
+        slides.forEach((slide, index) => {
+            const slideCenter = slide.offsetLeft + slide.clientWidth / 2;
+            const distance = Math.abs(sliderCenter - slideCenter);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestIndex = index;
+            }
+        });
+
+        if (closestIndex !== currentSlide) {
+            currentSlide = closestIndex;
+            renderDots();
+        }
+    }
+
+    sliderEl.addEventListener("scroll", updateCurrentSlideFromScroll);
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    sliderEl.addEventListener('mousedown', (e) => {
+        isDown = true;
+        sliderEl.classList.add('cursor-grabbing');
+        startX = e.pageX - sliderEl.offsetLeft;
+        scrollLeft = sliderEl.scrollLeft;
+    });
+
+    sliderEl.addEventListener('mouseleave', () => {
+        isDown = false;
+        sliderEl.classList.remove('cursor-grabbing');
+    });
+
+    sliderEl.addEventListener('mouseup', () => {
+        isDown = false;
+        sliderEl.classList.remove('cursor-grabbing');
+    });
+
+    sliderEl.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - sliderEl.offsetLeft;
+        const walk = (x - startX) * 1.2;
+        sliderEl.scrollLeft = scrollLeft - walk;
+    });
+
+    function renderAll() {
+        renderSceneButtons();
+        renderSlides();
+        renderDots();
+    }
+
+    renderAll();
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const resultsSection = document.querySelector("#results-section");
+            if (!resultsSection) return;
+
+            const buttons = resultsSection.querySelectorAll("#gallery-buttons-results .scene-button");
+            const items = resultsSection.querySelectorAll("#gallery-carousel-results .video-gallery-item");
+
+            buttons.forEach((button) => {
+                button.addEventListener("click", async function () {
+                    const index = Number(this.dataset.videoIndex);
+                    const activeItem = items[index];
+                    if (!activeItem) return;
+
+                    items.forEach((item) => {
+                        item.classList.remove("active");
+                        const v = item.querySelector("video");
+                        if (v) {
+                            v.pause();
+                            v.currentTime = 0;
+                        }
+                    });
+
+                    activeItem.classList.add("active");
+
+                    buttons.forEach((btn) => btn.classList.remove("is-primary"));
+                    this.classList.add("is-primary");
+
+                    const video = activeItem.querySelector("video");
+                    const source = activeItem.querySelector("source");
+
+                    if (video && source && source.dataset.src && !source.getAttribute("src")) {
+                        source.setAttribute("src", source.dataset.src);
+                        video.load();
+                    }
+
+                    if (video) {
+                        video.muted = true;
+                        video.playsInline = true;
+                        try {
+                            await video.play();
+                        } catch (e) {
+                            console.log("Autoplay failed:", e);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const comparisonSection = document.querySelector("#comparison-section");
+            if (!comparisonSection) return;
+
+            // const sceneButtons = comparisonSection.querySelectorAll(".video-gallery-buttons:first-of-type .scene-button");
+            const sceneButtons = comparisonSection.querySelectorAll("#comparison-scene-buttons .scene-button");
+            const methodButtons = comparisonSection.querySelectorAll("#gallery-buttons-nvs .button");
+            const items = comparisonSection.querySelectorAll("#gallery-carousel-nvs .video-gallery-item");
+
+            let currentScene = 0;
+
+            sceneButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    currentScene = Number(btn.dataset.videoIndex);
+
+                    sceneButtons.forEach(b => b.classList.remove("is-primary"));
+                    btn.classList.add("is-primary");
+
+                    methodButtons.forEach((b, i) => {
+                        b.classList.remove("is-primary");
+                        if (i === 0) b.classList.add("is-primary");
+                    });
+
+                    updateView(0);
+                });
+            });
+
+            methodButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    methodButtons.forEach(b => b.classList.remove("is-primary"));
+                    btn.classList.add("is-primary");
+
+                    const methodIdx = Number(btn.dataset.videoIndex);
+                    updateView(methodIdx);
+                });
+            });
+
+            function updateView(methodIdx) {
+                const index = currentScene + methodIdx;
+
+                items.forEach(item => {
+                    item.classList.remove("active");
+                    const v = item.querySelector("video");
+                    if (v) {
+                        v.pause();
+                        v.currentTime = 0;
+                    }
+                });
+
+                const activeItem = items[index];
+                if (!activeItem) return;
+
+                activeItem.classList.add("active");
+
+                const video = activeItem.querySelector("video");
+                const source = activeItem.querySelector("source");
+
+                if (video && source && source.dataset.src && !source.getAttribute("src")) {
+                    source.setAttribute("src", source.dataset.src);
+                    video.load();
+                }
+
+                if (video) {
+                    video.muted = true;
+                    video.playsInline = true;
+                    video.play().catch(() => {});
+                }
+            }
+        });
+    </script>
+</body></html>
