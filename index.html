@@ -180,6 +180,40 @@
 
         <section id="world-interactive" class="mb-8 md:mb-12">
             <div class="w-full bg-white rounded-2xl md:rounded-3xl mb-4 md:mb-6 shadow-lg border border-gray-100 p-3 md:p-5">
+                <div class="video-gallery-buttons mb-3" id="world-scene-buttons">
+                    <button class="scene-button world-scene-button is-primary" type="button"
+                        data-scene-name="Sweden"
+                        data-world-img="./src/img/sweden_world.png"
+                        data-world-zoom-in="./src/videos/teaser/zoom_in_sweden.mp4"
+                        data-world-main="./src/videos/teaser/sweden.mp4"
+                        data-world-zoom-out="./src/videos/teaser/zoom_out_sweden.mp4">
+                        <img src="./src/img/sweden.png" alt="Sweden scene teaser">
+                    </button>
+                    <button class="scene-button world-scene-button" type="button"
+                        data-scene-name="Alpine"
+                        data-world-img="./src/img/alpine_world.png"
+                        data-world-zoom-in="./src/videos/teaser/zoom_in_alpine.mp4"
+                        data-world-main="./src/videos/teaser/alpine.mp4"
+                        data-world-zoom-out="./src/videos/teaser/zoom_out_alpine.mp4">
+                        <img src="./src/img/alpine.png" alt="Alpine scene teaser">
+                    </button>
+                    <button class="scene-button world-scene-button" type="button"
+                        data-scene-name="Cloud"
+                        data-world-img="./src/img/cloud_world.png"
+                        data-world-zoom-in="./src/videos/teaser/zoom_in_cloud.mp4"
+                        data-world-main="./src/videos/cloud.mp4"
+                        data-world-zoom-out="./src/videos/teaser/zoom_out_cloud.mp4">
+                        <img src="./src/img/cloud11.png" alt="Cloud scene teaser">
+                    </button>
+                    <button class="scene-button world-scene-button" type="button"
+                        data-scene-name="Smoke Fire"
+                        data-world-img="./src/img/smoke_fire_world.png"
+                        data-world-zoom-in="./src/videos/teaser/zoom_in_smoke_fire.mp4"
+                        data-world-main="./src/videos/teaser/smoke_fire.mp4"
+                        data-world-zoom-out="./src/videos/teaser/zoom_out_smoke_fire.mp4">
+                        <img src="./src/img/smoke_fire8.png" alt="Smoke fire scene teaser">
+                    </button>
+                </div>
                 <div id="world-teaser-stage" class="world-teaser-stage overflow-hidden rounded-xl" style="border:1px solid #e2e8f0;">
                     <div id="world-main-view" class="world-main-view">
                         <img id="world-img" src="./src/img/sweden_world.png" alt="World overview" class="block">
@@ -342,45 +376,15 @@
                     <!-- Scene buttons -->
                     <div class="video-gallery-buttons" id="gallery-buttons-results">
                         <button class="scene-button is-primary" data-video-index="0">
-                            <img src="./src/img/alpine.png" alt="Scene 1">
+                            <img src="./src/img/patagonia.png" alt="Scene 1">
                         </button>
                         <button class="scene-button" data-video-index="1">
-                            <img src="./src/img/cloud11.png" alt="Scene 2">
-                        </button>
-                        <button class="scene-button" data-video-index="2">
-                            <img src="./src/img/patagonia.png" alt="Scene 3">
-                        </button>
-                        <button class="scene-button" data-video-index="3">
-                            <img src="./src/img/smoke_fire8.png" alt="Scene 4">
-                        </button>
-                        <button class="scene-button" data-video-index="4">
-                            <img src="./src/img/waterfall12.png" alt="Scene 5">
+                            <img src="./src/img/waterfall12.png" alt="Scene 2">
                         </button>
                     </div>
 
                     <!-- Video gallery carousel -->
                     <div class="video-gallery-carousel" id="gallery-carousel-results">
-
-                        <div class="video-gallery-item active">
-                            <div class="image-video-pair" style="justify-content: center;">
-                                
-                                <div class="video-container">
-                                    <video preload="none" controls="" muted="" loop="" autoplay="">
-                                        <source src="./src/videos/alpine.mp4" type="video/mp4">
-                                    </video>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="video-gallery-item">
-                            <div class="image-video-pair" style="justify-content: center;">
-                                <div class="video-container">
-                                    <video preload="none" controls="" muted="" loop="" autoplay="">
-                                        <source data-src="./src/videos/cloud.mp4" type="video/mp4">
-                                    </video>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="video-gallery-item">
                             <div class="image-video-pair" style="justify-content: center;">
@@ -388,17 +392,6 @@
                                 <div class="video-container">
                                     <video preload="none" controls="" muted="" loop="" autoplay="">
                                         <source data-src="./src/videos/patagonia.mp4" type="video/mp4">
-                                    </video>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="video-gallery-item">
-                            <div class="image-video-pair" style="justify-content: center;">
-                                
-                                <div class="video-container">
-                                    <video preload="none" controls="" muted="" loop="" autoplay="">
-                                        <source data-src="./src/videos/smoke_fire.mp4" type="video/mp4">
                                     </video>
                                 </div>
                             </div>
@@ -722,6 +715,8 @@
     const worldVideoView = document.getElementById('world-video-view');
     const worldPlayBtn = document.getElementById('world-play-btn');
     const worldBackBtn = document.getElementById('world-back-btn');
+    const worldImg = document.getElementById('world-img');
+    const worldSceneButtons = Array.from(document.querySelectorAll('#world-scene-buttons .world-scene-button'));
     const worldZoomInVideo = document.getElementById('world-zoom-in-video');
     const worldMainVideo = document.getElementById('world-main-video');
     const worldZoomOutVideo = document.getElementById('world-zoom-out-video');
@@ -734,11 +729,11 @@
         const WORLD_START_OFFSET = 0.03;
 
         const worldMainSource = worldMainVideo.querySelector('source');
-        const worldMainSrc = worldMainSource ? worldMainSource.getAttribute('src') : '';
+        let worldMainSrc = worldMainSource ? worldMainSource.getAttribute('src') : '';
         const worldZoomInSource = worldZoomInVideo.querySelector('source');
-        const worldZoomInSrc = worldZoomInSource ? worldZoomInSource.getAttribute('src') : '';
+        let worldZoomInSrc = worldZoomInSource ? worldZoomInSource.getAttribute('src') : '';
         const worldZoomOutSource = worldZoomOutVideo.querySelector('source');
-        const worldZoomOutSrc = worldZoomOutSource ? worldZoomOutSource.getAttribute('src') : '';
+        let worldZoomOutSrc = worldZoomOutSource ? worldZoomOutSource.getAttribute('src') : '';
 
         const safePlay = (video) => {
             const playPromise = video.play();
@@ -902,6 +897,41 @@
             worldState = 'idle';
         };
 
+        const setWorldScene = (button) => {
+            if (!button) return;
+
+            const nextMain = button.dataset.worldMain || '';
+            const nextZoomIn = button.dataset.worldZoomIn || nextMain;
+            const nextZoomOut = button.dataset.worldZoomOut || nextMain;
+            const nextImg = button.dataset.worldImg || '';
+
+            if (!nextMain) return;
+
+            showMainView();
+
+            worldSceneButtons.forEach((btn) => btn.classList.remove('is-primary'));
+            button.classList.add('is-primary');
+
+            if (worldImg && nextImg) {
+                worldImg.src = nextImg;
+                if (button.dataset.sceneName) {
+                    worldImg.alt = button.dataset.sceneName + ' world overview';
+                }
+            }
+
+            worldMainSrc = nextMain;
+            worldZoomInSrc = nextZoomIn;
+            worldZoomOutSrc = nextZoomOut;
+
+            if (worldMainSource) worldMainSource.setAttribute('src', worldMainSrc);
+            if (worldZoomInSource) worldZoomInSource.setAttribute('src', worldZoomInSrc);
+            if (worldZoomOutSource) worldZoomOutSource.setAttribute('src', worldZoomOutSrc);
+
+            worldMainVideo.load();
+            worldZoomInVideo.load();
+            worldZoomOutVideo.load();
+        };
+
         const showVideoView = () => {
             worldVideoView.classList.add('active');
             worldPlayBtn.style.display = 'none';
@@ -989,6 +1019,16 @@
 
         worldZoomInVideo.load();
         unloadZoomOutVideo();
+
+        if (worldSceneButtons.length > 0) {
+            const initialScene = worldSceneButtons.find((btn) => btn.classList.contains('is-primary')) || worldSceneButtons[0];
+            setWorldScene(initialScene);
+            worldSceneButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    setWorldScene(button);
+                });
+            });
+        }
 
         worldPlayBtn.addEventListener('click', async () => {
             if (worldState !== 'idle') return;
@@ -1230,45 +1270,58 @@
             const buttons = resultsSection.querySelectorAll("#gallery-buttons-results .scene-button");
             const items = resultsSection.querySelectorAll("#gallery-carousel-results .video-gallery-item");
 
+            const activateResultScene = async (index, targetButton = null) => {
+                const activeItem = items[index];
+                if (!activeItem) return;
+
+                items.forEach((item) => {
+                    item.classList.remove("active");
+                    const v = item.querySelector("video");
+                    if (v) {
+                        v.pause();
+                        v.currentTime = 0;
+                    }
+                });
+
+                activeItem.classList.add("active");
+
+                buttons.forEach((btn) => btn.classList.remove("is-primary"));
+                const buttonToActivate = targetButton || buttons[index];
+                if (buttonToActivate) {
+                    buttonToActivate.classList.add("is-primary");
+                }
+
+                const video = activeItem.querySelector("video");
+                const source = activeItem.querySelector("source");
+
+                if (video && source && source.dataset.src && !source.getAttribute("src")) {
+                    source.setAttribute("src", source.dataset.src);
+                    video.load();
+                }
+
+                if (video) {
+                    video.muted = true;
+                    video.playsInline = true;
+                    try {
+                        await video.play();
+                    } catch (e) {
+                        console.log("Autoplay failed:", e);
+                    }
+                }
+            };
+
             buttons.forEach((button) => {
                 button.addEventListener("click", async function () {
                     const index = Number(this.dataset.videoIndex);
-                    const activeItem = items[index];
-                    if (!activeItem) return;
-
-                    items.forEach((item) => {
-                        item.classList.remove("active");
-                        const v = item.querySelector("video");
-                        if (v) {
-                            v.pause();
-                            v.currentTime = 0;
-                        }
-                    });
-
-                    activeItem.classList.add("active");
-
-                    buttons.forEach((btn) => btn.classList.remove("is-primary"));
-                    this.classList.add("is-primary");
-
-                    const video = activeItem.querySelector("video");
-                    const source = activeItem.querySelector("source");
-
-                    if (video && source && source.dataset.src && !source.getAttribute("src")) {
-                        source.setAttribute("src", source.dataset.src);
-                        video.load();
-                    }
-
-                    if (video) {
-                        video.muted = true;
-                        video.playsInline = true;
-                        try {
-                            await video.play();
-                        } catch (e) {
-                            console.log("Autoplay failed:", e);
-                        }
-                    }
+                    await activateResultScene(index, this);
                 });
             });
+
+            const initialButton = resultsSection.querySelector("#gallery-buttons-results .scene-button.is-primary") || buttons[0];
+            if (initialButton) {
+                const initialIndex = Number(initialButton.dataset.videoIndex || 0);
+                activateResultScene(initialIndex, initialButton);
+            }
         });
     </script>
 
