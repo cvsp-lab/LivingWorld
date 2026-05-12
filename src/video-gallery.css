@@ -147,8 +147,8 @@ figcaption {
   cursor: pointer;
   transition: all 0.3s ease;
   margin: 0.2rem;
-  width: 25%;
-  max-width: 180px;
+  width: 20%;
+  max-width: 140px;
   position: relative;
   display: inline-block;
 }
@@ -410,32 +410,41 @@ figure figcaption {
 }
 
 .metric-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
   font-size: 0.95rem;
   font-weight: 600;
   color: #374151;
   margin-bottom: 8px;
 }
+.metric-label .value {
+  font-weight: 700;
+  color: #1f2937;
+  font-variant-numeric: tabular-nums;
+}
+.metric-label .value .ci {
+  font-weight: 500;
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-left: 3px;
+}
 
 .bar-track {
   width: 100%;
-  height: 34px;
+  height: 22px;
   background: #ede9fe;
   border-radius: 999px;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }
 
 .bar-fill {
   height: 100%;
   border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 12px;
-  font-weight: 700;
-  color: white;
-  font-size: 0.95rem;
-  white-space: nowrap;
+  position: relative;
+  z-index: 1;
 }
 
 .bar-fill.physics {
@@ -446,8 +455,465 @@ figure figcaption {
   background: #a78bfa;
 }
 
+/* CI whisker overlay (I-bar drawn above the track) */
+.ci-whisker {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 18px;
+  pointer-events: none;
+  z-index: 2;
+}
+.ci-whisker::before,
+.ci-whisker::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #4c1d95;
+  border-radius: 1px;
+}
+.ci-whisker::before { left: 0; }
+.ci-whisker::after  { right: 0; }
+.ci-whisker .bar {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #4c1d95;
+  border-radius: 1px;
+  transform: translateY(-50%);
+}
+
+/* Study sub-group (groups one study, e.g. 170-participant or 95-participant) */
+.study-group {
+  margin-top: 28px;
+}
+.study-group + .study-group {
+  margin-top: 44px;
+}
+.study-group-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4b5563;
+  margin: 0 auto 18px auto;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.study-group-title .n {
+  font-weight: 500;
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-left: 6px;
+}
+
+/* 5-column grid used by the 95-participant section */
+.study-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(180px, 1fr));
+  gap: 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Compact card variant for the 5-wide grid */
+.study-card.compact {
+  padding: 16px 14px;
+}
+.study-card.compact h4 {
+  font-size: 1.05rem;
+  margin-bottom: 14px;
+}
+.study-card.compact .metric-row {
+  margin-bottom: 12px;
+}
+.study-card.compact .metric-label {
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+}
+.study-card.compact .metric-label .value .ci {
+  font-size: 0.72rem;
+}
+.study-card.compact .bar-track {
+  height: 16px;
+}
+.study-card.compact .ci-whisker {
+  height: 13px;
+}
+
+/* Colors for the four 95-participant metrics (purple gradient) */
+.bar-fill.imaging   { background: #6d28d9; }
+.bar-fill.aesthetic { background: #7c3aed; }
+.bar-fill.motion-95 { background: #9333ea; }
+.bar-fill.flicker   { background: #a78bfa; }
+
+@media (max-width: 1100px) {
+  .study-grid-5 {
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+  }
+}
 @media (max-width: 900px) {
   .study-grid {
     grid-template-columns: 1fr;
   }
+}
+@media (max-width: 700px) {
+  .study-grid-5 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === Donut comparison view (alternative visualization) === */
+.donut-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(180px, 1fr));
+  gap: 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.donut-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 16px 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+.donut-card h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  text-align: center;
+  color: #1f2937;
+}
+.donut-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 8px;
+  row-gap: 14px;
+}
+.donut-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.donut {
+  width: 78px;
+  height: 78px;
+  overflow: visible;
+}
+.donut-bg {
+  stroke: #ede9fe;
+  fill: none;
+}
+.donut-mean {
+  fill: none;
+}
+.donut-mean.imaging   { stroke: #6d28d9; }
+.donut-mean.aesthetic { stroke: #7c3aed; }
+.donut-mean.motion-95 { stroke: #9333ea; }
+.donut-mean.flicker   { stroke: #a78bfa; }
+.donut-mean.physics   { stroke: #7c3aed; }
+.donut-mean.motion    { stroke: #a78bfa; }
+.donut-ci-arc {
+  stroke: #4c1d95;
+  stroke-opacity: 0.55;
+  fill: none;
+}
+.donut-value {
+  font-size: 16px;
+  font-weight: 700;
+  fill: #1f2937;
+  font-family: 'Inter', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.donut-ci-label {
+  font-size: 8.5px;
+  font-weight: 500;
+  fill: #6b7280;
+  font-family: 'Inter', sans-serif;
+}
+.donut-metric {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* 3-column donut grid for the 170-participant comparison */
+.donut-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Large card variant for the 170p donut view (2 donuts per card) */
+.donut-card.large {
+  padding: 20px 18px;
+}
+.donut-card.large h4 {
+  font-size: 1.35rem;
+  margin-bottom: 18px;
+}
+.donut-card.large .donut-row {
+  column-gap: 12px;
+}
+.donut-card.large .donut {
+  width: 110px;
+  height: 110px;
+}
+.donut-card.large .donut-value {
+  font-size: 18px;
+}
+.donut-card.large .donut-ci-label {
+  font-size: 9.5px;
+}
+.donut-card.large .donut-metric {
+  font-size: 0.92rem;
+  margin-top: 8px;
+}
+
+@media (max-width: 1100px) {
+  .donut-grid { grid-template-columns: repeat(3, minmax(180px, 1fr)); }
+}
+@media (max-width: 900px) {
+  .donut-grid-3 { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .donut-grid { grid-template-columns: 1fr; }
+}
+
+/* === Interactivity user study (radar chart) === */
+.interactivity-desc {
+  max-width: 760px;
+  margin: 0 auto 28px auto;
+  color: #5b5b5b;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: center;
+}
+.radar-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.radar {
+  width: 460px;
+  height: 400px;
+  max-width: 100%;
+  overflow: visible;
+}
+.radar-grid {
+  fill: none;
+  stroke: #e5e7eb;
+  stroke-width: 1;
+}
+.radar-axis {
+  stroke: #d1d5db;
+  stroke-width: 1;
+}
+.radar-ci-band {
+  fill: #7c3aed;
+  fill-opacity: 0.12;
+  stroke: none;
+}
+.radar-mean {
+  fill: #7c3aed;
+  fill-opacity: 0.32;
+  stroke: #6d28d9;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.radar-vertex {
+  fill: #6d28d9;
+  stroke: #ffffff;
+  stroke-width: 1.5;
+}
+.radar-axis-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  fill: #374151;
+  text-anchor: middle;
+}
+.radar-score {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  fill: #1f2937;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+}
+.radar-score-ci {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  fill: #6b7280;
+  text-anchor: middle;
+}
+.radar-tick {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  fill: #9ca3af;
+  text-anchor: middle;
+}
+.radar-center-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  fill: #6b7280;
+  font-weight: 500;
+  text-anchor: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.radar-center-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  fill: #1f2937;
+  text-anchor: middle;
+}
+.radar-center-ci {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  fill: #6b7280;
+  font-weight: 500;
+  text-anchor: middle;
+}
+
+/* Survey form evidence image below the radar chart */
+.survey-form-wrap {
+  margin: 28px auto 0 auto;
+  max-width: 90%;
+  text-align: center;
+}
+.survey-form-wrap img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  display: block;
+}
+.survey-form-caption {
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+@media (max-width: 900px) {
+  .survey-form-wrap { max-width: 80%; }
+}
+@media (max-width: 600px) {
+  .survey-form-wrap { max-width: 95%; }
+}
+
+/* === Quantitative Evaluation table === */
+.quanti-subsection {
+  margin-top: 48px;
+  margin-bottom: 56px;
+  text-align: center;
+}
+.quanti-subsection h3 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.quanti-desc {
+  max-width: 920px;
+  margin: 0 auto 28px auto;
+  color: #5b5b5b;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: center;
+}
+.quanti-table-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow-x: auto;
+}
+.quanti-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: #1f2937;
+  font-family: 'Inter', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.quanti-table th,
+.quanti-table td {
+  padding: 10px 12px;
+  text-align: center;
+  border: none;
+  white-space: nowrap;
+}
+.quanti-table th {
+  font-weight: 700;
+  color: #374151;
+}
+.quanti-table thead tr:first-child th {
+  border-top: 2px solid #1f2937;
+  padding-top: 14px;
+  padding-bottom: 6px;
+}
+.quanti-table thead tr:last-child th {
+  border-bottom: 1.5px solid #1f2937;
+  padding-bottom: 10px;
+}
+.quanti-table th.group-header {
+  font-weight: 700;
+  border-bottom: 1px solid #d1d5db;
+}
+.quanti-table tbody td {
+  border-bottom: 1px solid #f1f1f1;
+}
+.quanti-table tbody tr.category-sep td {
+  border-top: 1px solid #9ca3af;
+}
+.quanti-table tbody tr:last-child td {
+  border-bottom: 2px solid #1f2937;
+}
+.quanti-table .category-cell {
+  font-weight: 700;
+  color: #4b5563;
+  background: #fafaf9;
+  text-align: left;
+  padding-left: 16px;
+  border-right: 1px solid #e5e7eb;
+}
+.quanti-table .method-cell {
+  text-align: left;
+  padding-left: 16px;
+  font-weight: 500;
+}
+.quanti-table .ours-row {
+  background: rgba(124, 58, 237, 0.06);
+}
+.quanti-table .ours-row .method-cell {
+  font-weight: 700;
+  color: #6d28d9;
+}
+.quanti-table u {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.quanti-note {
+  max-width: 1100px;
+  margin: 12px auto 0 auto;
+  font-size: 0.82rem;
+  color: #6b7280;
+  text-align: right;
+  font-style: italic;
+}
+
+@media (max-width: 800px) {
+  .quanti-table { font-size: 0.82rem; }
+  .quanti-table th,
+  .quanti-table td { padding: 8px 6px; }
+  .quanti-table .category-cell,
+  .quanti-table .method-cell { padding-left: 8px; }
 }
