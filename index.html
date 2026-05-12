@@ -180,14 +180,14 @@
         <section id="world-interactive" class="mb-8 md:mb-12">
             <div class="w-full bg-white rounded-2xl md:rounded-3xl mb-4 md:mb-6 shadow-lg border border-gray-100 p-3 md:p-5">
                 <div class="video-gallery-buttons mb-3" id="world-scene-buttons">
-                    <!-- <button class="scene-button world-scene-button is-primary" type="button"
+                    <button class="scene-button world-scene-button is-primary" type="button"
                         data-scene-name="Sweden"
                         data-world-img="./src/img/sweden_world.png"
                         data-world-zoom-in="./src/videos/teaser/zoom_in_sweden.mp4"
                         data-world-main="./src/videos/teaser/sweden.mp4"
                         data-world-zoom-out="./src/videos/teaser/zoom_out_sweden.mp4">
                         <img src="./src/img/sweden.png" alt="Sweden scene teaser">
-                    </button> -->
+                    </button>
                     <!-- <button class="scene-button world-scene-button" type="button"
                         data-scene-name="Alpine"
                         data-world-img="./src/img/alpine_world.png"
@@ -481,695 +481,79 @@
         <section class="hero is-small" id="comparison-section">
             <div class="hero-body">
                 <div class="container">
-                    <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Comparisons with Baseline Methods</h2>
-
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Comparisons with Video Generation Models</h2>
+                    
                     <figure class="image">
                         <figcaption>
-                            We compare LivingWorld against video and 4D scene generation baselines.
-                            Video models often suffer from inconsistent 3D geometry, unnatural motion dynamics, and limited camera controllability,
-                            while 4D scene baselines are limited in scene scale, motion diversity, or runtime.
-                            LivingWorld maintains a coherent 3D representation with physically consistent dynamics and precise control over camera motion.
+                            We compare our method with video generation models under identical camera motion prompts.
+                            While these models often suffer from inconsistent 3D geometry, unnatural motion dynamics, and limited camera controllability,
+                            our method maintains a coherent 3D representation with physically consistent dynamics and precise control over camera motion.
                         </figcaption>
                     </figure>
-                    <div class="quanti-subsection">
-                        <h3>Quantitative Evaluation</h3>
-                            <p class="quanti-desc">
-                                We evaluate LivingWorld against video- and 4D-scene-generation baselines on 60 expanded scenes.
-                                <strong>VBench</strong> measures imaging quality, aesthetic, motion smoothness, and temporal flicker;
-                                <strong>PhysReal</strong> is a GPT-based assessment of physical realism;
-                                <strong>Runtime</strong> is per-scene generation time.
-                                LivingWorld attains the best or comparable scores across all dimensions while being orders of magnitude faster.
-                            </p>
-                            <div class="quanti-table-wrap">
-                                <table class="quanti-table">
-                                    <thead>
-                                        <tr>
-                                            <th rowspan="2">Category</th>
-                                            <th rowspan="2">Method</th>
-                                            <th colspan="4" class="group-header">VBench (↑)</th>
-                                            <th rowspan="2">PhysReal (↑)</th>
-                                            <th rowspan="2">Runtime (↓)</th>
-                                        </tr>
-                                        <tr>
-                                            <th>Imaging</th>
-                                            <th>Aesthetic</th>
-                                            <th>Motion</th>
-                                            <th>Flicker</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td rowspan="3" class="category-cell">Video</td>
-                                            <td class="method-cell">Veo 3.1</td>
-                                            <td><strong>0.694</strong></td>
-                                            <td><u>0.625</u></td>
-                                            <td>0.992</td>
-                                            <td>0.979</td>
-                                            <td><u>0.622</u></td>
-                                            <td><u>140</u></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="method-cell">CogVideoX</td>
-                                            <td><u>0.677</u></td>
-                                            <td>0.611</td>
-                                            <td>0.991</td>
-                                            <td>0.983</td>
-                                            <td>0.575</td>
-                                            <td>1510</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="method-cell">Tora</td>
-                                            <td>0.649</td>
-                                            <td>0.609</td>
-                                            <td>0.992</td>
-                                            <td>0.976</td>
-                                            <td>0.571</td>
-                                            <td>550</td>
-                                        </tr>
-                                        <tr class="category-sep">
-                                            <td rowspan="3" class="category-cell">4D Scene</td>
-                                            <td class="method-cell">4DGS-Cinemagraphy</td>
-                                            <td>0.637</td>
-                                            <td>0.604</td>
-                                            <td><strong>0.996</strong></td>
-                                            <td><u>0.988</u></td>
-                                            <td>0.605</td>
-                                            <td>1980</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="method-cell">PerpetualWonder</td>
-                                            <td>0.553</td>
-                                            <td>0.553</td>
-                                            <td>0.979</td>
-                                            <td>0.972</td>
-                                            <td>0.554</td>
-                                            <td>3580</td>
-                                        </tr>
-                                        <tr class="ours-row">
-                                            <td class="method-cell">LivingWorld</td>
-                                            <td>0.673</td>
-                                            <td><strong>0.639</strong></td>
-                                            <td><u>0.995</u></td>
-                                            <td><strong>0.989</strong></td>
-                                            <td><strong>0.655</strong></td>
-                                            <td><strong>12</strong></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p class="quanti-note">
-                                    <strong>Bold</strong>: best&nbsp;&nbsp;&nbsp;<u>underline</u>: second best&nbsp;&nbsp;&nbsp;Runtime is in seconds.
-                                </p>
-                            </div>
-                    </div>
-
 
                     <div class="human-study">
                         <h3>Human Study (2AFC)</h3>
                         <p class="study-desc">
-                            Values indicate the percentage of participants who preferred <strong>LivingWorld</strong> over each baseline. Outer arcs show 95% Wilson confidence intervals over participants.
+                            Values indicate the percentage of participants who preferred <strong>LivingWorld</strong> over each baseline.
                         </p>
 
-                        <!-- DISABLED: 170-participant Study (bar view) — donut view below is the primary visualization
-                        <div class="study-group">
-                            <h4 class="study-group-title">170-participant Study <span class="n"></span></h4>
-                            <div class="study-grid">
+                        <div class="study-grid">
 
-                                <div class="study-card">
-                                    <h4>CogVideoX</h4>
+                            
+                            <div class="study-card">
+                                <h4>CogVideoX</h4>
 
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Physics Plausibility</span><span class="value">78%<span class="ci">(±6.2)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill physics" style="width:78%;"></div>
-                                            <div class="ci-whisker" style="left:71.8%; width:12.4%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Motion Fidelity</span><span class="value">73%<span class="ci">(±6.6)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill motion" style="width:73%;"></div>
-                                            <div class="ci-whisker" style="left:66.4%; width:13.2%;"><span class="bar"></span></div>
-                                        </div>
+                                <div class="metric-row">
+                                    <div class="metric-label">Physics Plausibility</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill physics" style="width:78%;">78%</div>
                                     </div>
                                 </div>
 
-                                <div class="study-card">
-                                    <h4>Tora</h4>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Physics Plausibility</span><span class="value">75%<span class="ci">(±6.5)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill physics" style="width:75%;"></div>
-                                            <div class="ci-whisker" style="left:68.5%; width:13.0%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Motion Fidelity</span><span class="value">80%<span class="ci">(±6.0)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill motion" style="width:80%;"></div>
-                                            <div class="ci-whisker" style="left:74.0%; width:12.0%;"><span class="bar"></span></div>
-                                        </div>
+                                <div class="metric-row">
+                                    <div class="metric-label">Motion Fidelity</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill motion" style="width:73%;">73%</div>
                                     </div>
                                 </div>
-
-                                <div class="study-card">
-                                    <h4>Veo 3.1</h4>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Physics Plausibility</span><span class="value">72%<span class="ci">(±6.7)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill physics" style="width:72%;"></div>
-                                            <div class="ci-whisker" style="left:65.3%; width:13.4%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Motion Fidelity</span><span class="value">72%<span class="ci">(±6.7)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill motion" style="width:72%;"></div>
-                                            <div class="ci-whisker" style="left:65.3%; width:13.4%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
-                        </div>
-                        -->
 
-                        <!-- 170-participant Study (Donut view) -->
-                        <!-- <div class="study-group">
-                            <h4 class="study-group-title">170-participant Study <span class="n"></span></h4>
-                            <div class="donut-grid-3">
+                            <div class="study-card">
+                                <h4>Tora</h4>
 
-                                <div class="donut-card large">
-                                    <h4>CogVideoX</h4>
-                                    <div class="donut-row">
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 4.93 59.19 A 46 46 0 0 1 11.47 24.87" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.67 42.88" class="donut-mean physics" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">78%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.2</text>
-                                            </svg>
-                                            <div class="donut-metric">Physics Plausibility</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 10.55 73.66 A 46 46 0 0 1 5.91 36.89" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.30 54.76" class="donut-mean motion" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">73%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.6</text>
-                                            </svg>
-                                            <div class="donut-metric">Motion Fidelity</div>
-                                        </div>
+                                <div class="metric-row">
+                                    <div class="metric-label">Physics Plausibility</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill physics" style="width:75%;">75%</div>
                                     </div>
                                 </div>
 
-                                <div class="donut-card large">
-                                    <h4>Tora</h4>
-                                    <div class="donut-row">
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 7.78 68.27 A 46 46 0 0 1 7.78 31.73" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.00 50.00" class="donut-mean physics" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">75%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.5</text>
-                                            </svg>
-                                            <div class="donut-metric">Physics Plausibility</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 4.09 52.89 A 46 46 0 0 1 14.56 20.68" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 13.86 38.26" class="donut-mean motion" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">80%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.0</text>
-                                            </svg>
-                                            <div class="donut-metric">Motion Fidelity</div>
-                                        </div>
+                                <div class="metric-row">
+                                    <div class="metric-label">Motion Fidelity</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill motion" style="width:80%;">80%</div>
                                     </div>
                                 </div>
-
-                                <div class="donut-card large">
-                                    <h4>Veo 3.1</h4>
-                                    <div class="donut-row">
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 12.28 76.33 A 46 46 0 0 1 5.24 39.40" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.67 57.12" class="donut-mean physics" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">72%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.7</text>
-                                            </svg>
-                                            <div class="donut-metric">Physics Plausibility</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 12.28 76.33 A 46 46 0 0 1 5.24 39.40" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.67 57.12" class="donut-mean motion" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">72%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.7</text>
-                                            </svg>
-                                            <div class="donut-metric">Motion Fidelity</div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
-                        </div> -->
 
-                        <!-- DISABLED: 95-participant Study (bar view) — donut view below is the primary visualization
-                        <div class="study-group">
-                            <h4 class="study-group-title">95-participant Study <span class="n"></span></h4>
-                            <div class="study-grid-5">
+                            <div class="study-card">
+                                <h4>Veo 3.1</h4>
 
-                                <div class="study-card compact">
-                                    <h4>CogVideoX</h4>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Imaging</span><span class="value">68%<span class="ci">(±9.0)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill imaging" style="width:68%;"></div>
-                                            <div class="ci-whisker" style="left:59.0%; width:18.0%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Aesthetic</span><span class="value">73%<span class="ci">(±8.6)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill aesthetic" style="width:73%;"></div>
-                                            <div class="ci-whisker" style="left:64.4%; width:17.2%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Motion</span><span class="value">66%<span class="ci">(±9.1)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill motion-95" style="width:66%;"></div>
-                                            <div class="ci-whisker" style="left:56.9%; width:18.2%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Flicker</span><span class="value">78%<span class="ci">(±8.0)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill flicker" style="width:78%;"></div>
-                                            <div class="ci-whisker" style="left:70.0%; width:16.0%;"><span class="bar"></span></div>
-                                        </div>
+                                <div class="metric-row">
+                                    <div class="metric-label">Physics Plausibility</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill physics" style="width:72%;">72%</div>
                                     </div>
                                 </div>
 
-                                <div class="study-card compact">
-                                    <h4>Tora</h4>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Imaging</span><span class="value">77%<span class="ci">(±8.2)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill imaging" style="width:77%;"></div>
-                                            <div class="ci-whisker" style="left:68.8%; width:16.4%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Aesthetic</span><span class="value">79%<span class="ci">(±7.9)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill aesthetic" style="width:79%;"></div>
-                                            <div class="ci-whisker" style="left:71.1%; width:15.8%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Motion</span><span class="value">76%<span class="ci">(±8.3)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill motion-95" style="width:76%;"></div>
-                                            <div class="ci-whisker" style="left:67.7%; width:16.6%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Flicker</span><span class="value">84%<span class="ci">(±7.2)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill flicker" style="width:84%;"></div>
-                                            <div class="ci-whisker" style="left:76.8%; width:14.4%;"><span class="bar"></span></div>
-                                        </div>
+                                <div class="metric-row">
+                                    <div class="metric-label">Motion Fidelity</div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill motion" style="width:72%;">72%</div>
                                     </div>
                                 </div>
-
-                                <div class="study-card compact">
-                                    <h4>Veo 3.1</h4>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Imaging</span><span class="value">58%<span class="ci">(±9.5)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill imaging" style="width:58%;"></div>
-                                            <div class="ci-whisker" style="left:48.5%; width:19.0%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Aesthetic</span><span class="value">66%<span class="ci">(±9.1)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill aesthetic" style="width:66%;"></div>
-                                            <div class="ci-whisker" style="left:56.9%; width:18.2%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Motion</span><span class="value">72%<span class="ci">(±8.7)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill motion-95" style="width:72%;"></div>
-                                            <div class="ci-whisker" style="left:63.3%; width:17.4%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Flicker</span><span class="value">75%<span class="ci">(±8.4)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill flicker" style="width:75%;"></div>
-                                            <div class="ci-whisker" style="left:66.6%; width:16.8%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="study-card compact">
-                                    <h4>4DGS-Cinematic</h4>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Imaging</span><span class="value">73%<span class="ci">(±8.6)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill imaging" style="width:73%;"></div>
-                                            <div class="ci-whisker" style="left:64.4%; width:17.2%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Aesthetic</span><span class="value">75%<span class="ci">(±8.4)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill aesthetic" style="width:75%;"></div>
-                                            <div class="ci-whisker" style="left:66.6%; width:16.8%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Motion</span><span class="value">68%<span class="ci">(±9.0)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill motion-95" style="width:68%;"></div>
-                                            <div class="ci-whisker" style="left:59.0%; width:18.0%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Flicker</span><span class="value">74%<span class="ci">(±8.5)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill flicker" style="width:74%;"></div>
-                                            <div class="ci-whisker" style="left:65.5%; width:17.0%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="study-card compact">
-                                    <h4>PerpetualWonder</h4>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Imaging</span><span class="value">82%<span class="ci">(±7.5)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill imaging" style="width:82%;"></div>
-                                            <div class="ci-whisker" style="left:74.5%; width:15.0%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Aesthetic</span><span class="value">87%<span class="ci">(±6.6)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill aesthetic" style="width:87%;"></div>
-                                            <div class="ci-whisker" style="left:80.4%; width:13.2%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Motion</span><span class="value">85%<span class="ci">(±7.0)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill motion-95" style="width:85%;"></div>
-                                            <div class="ci-whisker" style="left:78.0%; width:14.0%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="metric-row">
-                                        <div class="metric-label"><span>Flicker</span><span class="value">92%<span class="ci">(±5.4)</span></span></div>
-                                        <div class="bar-track">
-                                            <div class="bar-fill flicker" style="width:92%;"></div>
-                                            <div class="ci-whisker" style="left:86.6%; width:10.8%;"><span class="bar"></span></div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
-                        </div>
 
-                        -->
-
-                        <!-- 95-participant Study (Donut view) -->
-                        <div class="study-group">
-                            <h4 class="study-group-title">95-participant Study <span class="n"></span></h4>
-                            <div class="donut-grid">
-
-                                <div class="donut-card">
-                                    <h4>CogVideoX</h4>
-                                    <div class="donut-row">
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 25.35 88.84 A 46 46 0 0 1 4.36 44.23" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 15.62 66.18" class="donut-mean imaging" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">68%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±9.0</text>
-                                            </svg>
-                                            <div class="donut-metric">Imaging</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 13.83 78.42 A 46 46 0 0 1 7.90 31.47" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.30 54.76" class="donut-mean aesthetic" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">73%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.6</text>
-                                            </svg>
-                                            <div class="donut-metric">Aesthetic</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 30.68 91.74 A 46 46 0 0 1 4.00 49.71" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 17.92 70.36" class="donut-mean motion-95" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">66%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±9.1</text>
-                                            </svg>
-                                            <div class="donut-metric">Motion</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 6.25 64.21 A 46 46 0 0 1 14.56 20.68" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.67 42.88" class="donut-mean flicker" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">78%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.0</text>
-                                            </svg>
-                                            <div class="donut-metric">Flicker</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="donut-card">
-                                    <h4>Tora</h4>
-                                    <div class="donut-row">
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 7.45 67.47 A 46 46 0 0 1 13.13 22.50" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.30 45.24" class="donut-mean imaging" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">77%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.2</text>
-                                            </svg>
-                                            <div class="donut-metric">Imaging</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 5.37 61.16 A 46 46 0 0 1 16.27 18.72" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 13.19 40.55" class="donut-mean aesthetic" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">79%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±7.9</text>
-                                            </svg>
-                                            <div class="donut-metric">Aesthetic</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 8.75 70.37 A 46 46 0 0 1 11.63 24.62" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.07 47.61" class="donut-mean motion-95" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">76%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.3</text>
-                                            </svg>
-                                            <div class="donut-metric">Motion</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 4.29 44.81 A 46 46 0 0 1 25.84 10.85" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 17.92 29.64" class="donut-mean flicker" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">84%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±7.2</text>
-                                            </svg>
-                                            <div class="donut-metric">Flicker</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="donut-card">
-                                    <h4>Veo 3.1</h4>
-                                    <div class="donut-row">
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 54.33 95.80 A 46 46 0 0 1 9.01 70.88" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 31.69 83.30" class="donut-mean imaging" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">58%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±9.5</text>
-                                            </svg>
-                                            <div class="donut-metric">Imaging</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 30.68 91.74 A 46 46 0 0 1 4.00 49.71" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 17.92 70.36" class="donut-mean aesthetic" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">66%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±9.1</text>
-                                            </svg>
-                                            <div class="donut-metric">Aesthetic</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 15.88 80.85 A 46 46 0 0 1 6.92 33.88" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.67 57.12" class="donut-mean motion-95" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">72%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.7</text>
-                                            </svg>
-                                            <div class="donut-metric">Motion</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 10.26 73.17 A 46 46 0 0 1 10.26 26.83" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.00 50.00" class="donut-mean flicker" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">75%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.4</text>
-                                            </svg>
-                                            <div class="donut-metric">Flicker</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="donut-card">
-                                    <h4>4DGS-Cinematic</h4>
-                                    <div class="donut-row">
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 13.83 78.42 A 46 46 0 0 1 7.90 31.47" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.30 54.76" class="donut-mean imaging" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">73%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.6</text>
-                                            </svg>
-                                            <div class="donut-metric">Imaging</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 10.26 73.17 A 46 46 0 0 1 10.26 26.83" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.00 50.00" class="donut-mean aesthetic" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">75%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.4</text>
-                                            </svg>
-                                            <div class="donut-metric">Aesthetic</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 25.35 88.84 A 46 46 0 0 1 4.36 44.23" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 15.62 66.18" class="donut-mean motion-95" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">68%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±9.0</text>
-                                            </svg>
-                                            <div class="donut-metric">Motion</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 11.95 75.86 A 46 46 0 0 1 9.01 29.12" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.07 52.39" class="donut-mean flicker" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">74%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.5</text>
-                                            </svg>
-                                            <div class="donut-metric">Flicker</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="donut-card">
-                                    <h4>PerpetualWonder</h4>
-                                    <div class="donut-row">
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 4.02 51.44 A 46 46 0 0 1 21.81 13.65" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 15.62 33.82" class="donut-mean imaging" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">82%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±7.5</text>
-                                            </svg>
-                                            <div class="donut-metric">Imaging</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 6.62 34.69 A 46 46 0 0 1 32.00 7.67" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 22.30 23.99" class="donut-mean aesthetic" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">87%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.6</text>
-                                            </svg>
-                                            <div class="donut-metric">Aesthetic</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 4.81 41.38 A 46 46 0 0 1 27.84 9.69" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 19.26 27.66" class="donut-mean motion-95" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">85%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±7.0</text>
-                                            </svg>
-                                            <div class="donut-metric">Motion</div>
-                                        </div>
-                                        <div class="donut-item">
-                                            <svg viewBox="0 0 100 100" class="donut">
-                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
-                                                <path d="M 15.69 19.36 A 46 46 0 0 1 42.52 4.61" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
-                                                <path d="M 50.00 12.00 A 38 38 0 1 1 31.69 16.70" class="donut-mean flicker" stroke-width="9" stroke-linecap="round"/>
-                                                <text x="50" y="52" text-anchor="middle" class="donut-value">92%</text>
-                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±5.4</text>
-                                            </svg>
-                                            <div class="donut-metric">Flicker</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
                         </div>
                     </div>
                     <br>
@@ -1272,55 +656,6 @@
             </div>
         </section>
         <br>
-        <br>
-
-        <section id="interactivity-study" class="mb-12 md:mb-16">
-            <h2 class="text-2xl md:text-3xl font-extrabold mb-6 md:mb-8 text-center text-gray-900">Interactivity User Study</h2>
-            <p class="interactivity-desc">
-                We conduct an interactivity user study to evaluate our GUI for interactive 4D world generation.
-                Participants used our interface to author and explore dynamic scenes, and rated their experience on a 7-point Likert scale (1 = Strongly Disagree, 7 = Strongly Agree) across three dimensions: <strong>Usability</strong>, <strong>Controllability</strong>, and <strong>Usefulness</strong>.
-                LivingWorld achieves consistently positive ratings across all dimensions, suggesting that the added 4D controls remain practically usable.
-            </p>
-            <div class="radar-wrap">
-                <svg viewBox="0 0 440 410" class="radar" xmlns="http://www.w3.org/2000/svg">
-                    <polygon class="radar-grid" points="220.00,196.43 236.08,224.29 203.92,224.29"/>
-                    <polygon class="radar-grid" points="220.00,177.86 252.17,233.57 187.83,233.57"/>
-                    <polygon class="radar-grid" points="220.00,159.29 268.25,242.86 171.75,242.86"/>
-                    <polygon class="radar-grid" points="220.00,140.71 284.33,252.14 155.67,252.14"/>
-                    <polygon class="radar-grid" points="220.00,122.14 300.42,261.43 139.58,261.43"/>
-                    <polygon class="radar-grid" points="220.00,103.57 316.50,270.71 123.50,270.71"/>
-                    <polygon class="radar-grid" points="220.00,85.00 332.58,280.00 107.42,280.00"/>
-                    <line class="radar-axis" x1="220" y1="215" x2="220.00" y2="85.00"/>
-                    <line class="radar-axis" x1="220" y1="215" x2="332.58" y2="280.00"/>
-                    <line class="radar-axis" x1="220" y1="215" x2="107.42" y2="280.00"/>
-                    <polygon class="radar-ci-band" points="220.00,86.86 332.58,280.00 107.42,280.00"/>
-                    <polygon class="radar-mean" points="220.00,110.07 314.89,269.79 123.50,270.71"/>
-                    <circle class="radar-vertex" cx="220.00" cy="110.07" r="4"/>
-                    <circle class="radar-vertex" cx="314.89" cy="269.79" r="4"/>
-                    <circle class="radar-vertex" cx="123.50" cy="270.71" r="4"/>
-                    <text class="radar-tick" x="210.00" y="199.43">1</text>
-                    <text class="radar-tick" x="210.00" y="162.29">3</text>
-                    <text class="radar-tick" x="210.00" y="125.14">5</text>
-                    <text class="radar-tick" x="210.00" y="88.00">7</text>
-                    <text class="radar-axis-label" x="220.00" y="57.00">Usability</text>
-                    <text class="radar-score" x="220.00" y="73.00">5.65</text>
-                    <text class="radar-score-ci" x="220.00" y="86.00">(±1.25)</text>
-                    <text class="radar-axis-label" x="353.37" y="296.00">Controllability</text>
-                    <text class="radar-score" x="353.37" y="312.00">5.90</text>
-                    <text class="radar-score-ci" x="353.37" y="325.00">(±1.42)</text>
-                    <text class="radar-axis-label" x="86.63" y="296.00">Usefulness</text>
-                    <text class="radar-score" x="86.63" y="312.00">6.00</text>
-                    <text class="radar-score-ci" x="86.63" y="325.00">(±1.21)</text>
-                    <text class="radar-center-label" x="220" y="201">Avg.</text>
-                    <text class="radar-center-value" x="220" y="227">5.85</text>
-                    <text class="radar-center-ci" x="220" y="245">(± 1.30)</text>
-                </svg>
-            </div>
-            <figure class="survey-form-wrap">
-                <img src="./src/img/user_study.png" alt="Interactivity user study survey form" loading="lazy">
-                <figcaption class="survey-form-caption">Survey form distributed to participants in the interactivity user study.</figcaption>
-            </figure>
-        </section>
         <br>
 
         <section id="gui-demo" class="mb-8 md:mb-12">
