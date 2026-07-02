@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LivingWorld</title>
+    <script src="./src/saved_resource"></script>
+    <link href="./src/css2" rel="stylesheet">
+    <link rel="stylesheet" href="./src/video-gallery.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #0ea5e9, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .btn-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .cursor-grab { cursor: grab; }
+        .cursor-grabbing { cursor: grabbing !important; }
+        .dot-transition { transition: all 0.3s ease; }
+
+        .mobile-clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) {
+            .mobile-clamp {
+                -webkit-line-clamp: unset;
+                display: block;
+            }
+        }
+
+        .world-teaser-stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 1;
+            min-height: 180px;
+            background: #e6edf3;
+        }
+
+        .world-main-view,
+        .world-video-view {
+            position: absolute;
+            inset: 0;
+        }
+
+        .world-main-view {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.18s ease;
+            z-index: 0;
+        }
+
+        .world-main-view.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .world-main-view img,
+        .world-video-layer {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .world-video-view {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            z-index: auto;
+        }
+
+        .world-video-view.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .world-video-layer {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.24s ease;
+            background: transparent;
+        }
+
+        .world-video-layer.active {
+            opacity: 1;
+        }
+
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.right-4{right:1rem}.top-0{top:0px}.top-4{top:1rem}.top-full{top:100%}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-6{margin-top:1.5rem;margin-bottom:1.5rem}.mb-1{margin-bottom:0.25rem}.mb-12{margin-bottom:3rem}.mb-16{margin-bottom:4rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mt-2{margin-top:0.5rem}.mt-8{margin-top:2rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-2{height:0.5rem}.h-6{height:1.5rem}.h-auto{height:auto}.w-2{width:0.5rem}.w-48{width:12rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-\[92\%\]{width:92%}.w-full{width:100%}.max-w-4xl{max-width:56rem}.max-w-5xl{max-width:64rem}.max-w-full{max-width:100%}.shrink-0{flex-shrink:0}.cursor-grab{cursor:grab}.snap-x{scroll-snap-type:x var(--tw-scroll-snap-strictness)}.snap-mandatory{--tw-scroll-snap-strictness:mandatory}.snap-center{scroll-snap-align:center}.scroll-mt-24{scroll-margin-top:6rem}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.gap-x-4{column-gap:1rem}.gap-y-2{row-gap:0.5rem}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.scroll-smooth{scroll-behavior:smooth}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-indigo-50{--tw-border-opacity:1;border-color:rgb(238 242 255 / var(--tw-border-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-indigo-50{--tw-gradient-from:#eef2ff var(--tw-gradient-from-position);--tw-gradient-to:rgb(238 242 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-purple-50{--tw-gradient-to:#faf5ff var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.object-cover{object-fit:cover}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-16{padding-bottom:4rem}.pb-2{padding-bottom:0.5rem}.pb-4{padding-bottom:1rem}.pt-24{padding-top:6rem}.text-center{text-align:center}.text-right{text-align:right}.text-justify{text-align:justify}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-0.025em}.tracking-wide{letter-spacing:0.025em}.tracking-widest{letter-spacing:0.1em}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-indigo-500{--tw-text-opacity:1;color:rgb(99 102 241 / var(--tw-text-opacity, 1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-100{opacity:1}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.hover\:bg-gray-600:hover{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.hover\:bg-indigo-400:hover{--tw-bg-opacity:1;background-color:rgb(129 140 248 / var(--tw-bg-opacity, 1))}.hover\:text-indigo-600:hover{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.hover\:text-indigo-800:hover{--tw-text-opacity:1;color:rgb(55 48 163 / var(--tw-text-opacity, 1))}.focus\:opacity-100:focus{opacity:1}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}@media (min-width: 768px){.md\:static{position:static}.md\:mb-10{margin-bottom:2.5rem}.md\:mb-12{margin-bottom:3rem}.md\:mb-16{margin-bottom:4rem}.md\:mb-2{margin-bottom:0.5rem}.md\:mb-24{margin-bottom:6rem}.md\:mb-4{margin-bottom:1rem}.md\:mb-5{margin-bottom:1.25rem}.md\:mb-6{margin-bottom:1.5rem}.md\:mb-8{margin-bottom:2rem}.md\:mt-0{margin-top:0px}.md\:mt-10{margin-top:2.5rem}.md\:mt-4{margin-top:1rem}.md\:block{display:block}.md\:flex{display:flex}.md\:hidden{display:none}.md\:h-2\.5{height:0.625rem}.md\:w-1\/2{width:50%}.md\:w-2\.5{width:0.625rem}.md\:w-6{width:1.5rem}.md\:w-\[70\%\]{width:70%}.md\:w-auto{width:auto}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:gap-10{gap:2.5rem}.md\:gap-12{gap:3rem}.md\:gap-2{gap:0.5rem}.md\:gap-5{gap:1.25rem}.md\:gap-6{gap:1.5rem}.md\:gap-x-6{column-gap:1.5rem}.md\:rounded-2xl{border-radius:1rem}.md\:rounded-3xl{border-radius:1.5rem}.md\:rounded-xl{border-radius:0.75rem}.md\:border-none{border-style:none}.md\:bg-transparent{background-color:transparent}.md\:p-0{padding:0px}.md\:p-10{padding:2.5rem}.md\:p-4{padding:1rem}.md\:p-5{padding:1.25rem}.md\:p-6{padding:1.5rem}.md\:p-8{padding:2rem}.md\:px-10{padding-left:2.5rem;padding-right:2.5rem}.md\:px-4{padding-left:1rem;padding-right:1rem}.md\:px-6{padding-left:1.5rem;padding-right:1.5rem}.md\:px-8{padding-left:2rem;padding-right:2rem}.md\:py-3{padding-top:0.75rem;padding-bottom:0.75rem}.md\:py-4{padding-top:1rem;padding-bottom:1rem}.md\:py-8{padding-top:2rem;padding-bottom:2rem}.md\:pb-24{padding-bottom:6rem}.md\:pt-32{padding-top:8rem}.md\:text-left{text-align:left}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\:text-6xl{font-size:3.75rem;line-height:1}.md\:text-base{font-size:1rem;line-height:1.5rem}.md\:text-lg{font-size:1.125rem;line-height:1.75rem}.md\:text-sm{font-size:0.875rem;line-height:1.25rem}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}.md\:opacity-0{opacity:0}.md\:shadow-none{--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.group:hover .md\:group-hover\:opacity-100{opacity:1}}@media (min-width: 1024px){.lg\:w-\[60\%\]{width:60%}}</style></head>
+<body class="antialiased leading-relaxed tracking-wide relative">
+
+    <nav class="fixed top-0 w-full z-50 glass-card px-4 md:px-6 py-3 md:py-4 flex justify-between items-center transition-all duration-300 relative">
+        <div class="font-bold text-base md:text-lg tracking-tight text-gray-800">LivingWorld</div>
+
+        <button onclick="toggleMobileMenu()" class="md:hidden text-gray-600 hover:text-indigo-600 focus:outline-none transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </nav>
+
+    <div class="container mx-auto max-w-5xl px-4 md:px-6 pt-24 md:pt-32 pb-16 md:pb-24">
+
+        <header class="text-center mb-12 md:mb-16">
+            <h1 class="text-3xl md:text-6xl font-extrabold mb-6 md:mb-8 tracking-tight gradient-text py-2 leading-tight">
+                LivingWorld: Interactive 4D World Generation with Environmental Dynamics
+            </h1>
+
+            <div class="text-base md:text-xl flex flex-wrap justify-center gap-x-4 md:gap-x-6 gap-y-2 mb-2 font-medium text-gray-800">
+    
+                <span>
+                    <a href="https://www.pnu-cvsp.com/members/hyeong-ju" class="custom-link" style="color: rgb(78, 173, 211);">
+                        Hyeongju Mun
+                    </a><sup>1*</sup>
+                </span>
+
+                <span>
+                    <a href="https://www.pnu-cvsp.com/members/inhwan" class="custom-link" style="color: rgb(78, 173, 211);">
+                        In-Hwan Jin
+                    </a><sup>1*</sup>
+                </span>
+
+                <span>
+                    <a href="https://www.pnu-cvsp.com/members/sohyeong" class="custom-link" style="color: rgb(78, 173, 211);">
+                        Sohyeong Kim
+                    </a><sup>1</sup>
+                </span>
+
+                <span>
+                    <a href="https://www.pnu-cvsp.com/prof" class="custom-link" style="color: rgb(78, 173, 211);">
+                        Kyeongbo Kong
+                    </a><sup>1†</sup>
+                </span>
+
+            </div>
+            <p class="text-base md:text-lg text-gray-500 mb-8 md:mb-10">
+                <sup>1</sup>Pusan National University<br>
+                <span class="text-sm md:text-base italic"><sup>*</sup>Equal Contribution     <sup>†</sup>Corresponding Author</span> 
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-3 md:gap-5">
+                <a href="https://arxiv.org/pdf/2604.01641" class="btn-hover flex items-center justify-center gap-2 bg-gray-900 text-white px-6 md:px-8 py-3 rounded-full font-semibold text-sm shadow-lg w-full md:w-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"></path>
+                        <path d="M4.5 3.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zM4.5 6.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zM4.5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"></path>
+                    </svg>
+                    Paper
+                </a>
+            </div>
+        </header>
+
+        <section id="world-interactive" class="mb-8 md:mb-12">
+            <div class="w-full bg-white rounded-2xl md:rounded-3xl mb-4 md:mb-6 shadow-lg border border-gray-100 p-3 md:p-5">
+                <div class="video-gallery-buttons mb-3" id="world-scene-buttons">
+                    <!-- <button class="scene-button world-scene-button is-primary" type="button"
+                        data-scene-name="Sweden"
+                        data-world-img="./src/img/sweden_world.png"
+                        data-world-zoom-in="./src/videos/teaser/zoom_in_sweden.mp4"
+                        data-world-main="./src/videos/teaser/sweden.mp4"
+                        data-world-zoom-out="./src/videos/teaser/zoom_out_sweden.mp4">
+                        <img src="./src/img/sweden.png" alt="Sweden scene teaser">
+                    </button> -->
+                    <!-- <button class="scene-button world-scene-button" type="button"
+                        data-scene-name="Alpine"
+                        data-world-img="./src/img/alpine_world.png"
+                        data-world-zoom-in="./src/videos/teaser/zoom_in_alpine.mp4"
+                        data-world-main="./src/videos/teaser/alpine.mp4"
+                        data-world-zoom-out="./src/videos/teaser/zoom_out_alpine.mp4">
+                        <img src="./src/img/alpine.png" alt="Alpine scene teaser">
+                    </button>
+                    <button class="scene-button world-scene-button" type="button"
+                        data-scene-name="Cloud"
+                        data-world-img="./src/img/cloud_world.png"
+                        data-world-zoom-in="./src/videos/teaser/zoom_in_cloud.mp4"
+                        data-world-main="./src/videos/teaser/cloud.mp4"
+                        data-world-zoom-out="./src/videos/teaser/zoom_out_cloud.mp4">
+                        <img src="./src/img/cloud11.png" alt="Cloud scene teaser">
+                    </button>
+                    <button class="scene-button world-scene-button" type="button"
+                        data-scene-name="Smoke Fire"
+                        data-world-img="./src/img/smoke_fire_world.png"
+                        data-world-zoom-in="./src/videos/teaser/zoom_in_smoke_fire.mp4"
+                        data-world-main="./src/videos/teaser/smoke_fire.mp4"
+                        data-world-zoom-out="./src/videos/teaser/zoom_out_smoke_fire.mp4">
+                        <img src="./src/img/smoke_fire8.png" alt="Smoke fire scene teaser">
+                    </button> -->
+                </div>
+                <div id="world-teaser-stage" class="world-teaser-stage overflow-hidden rounded-xl" style="border:1px solid #e2e8f0;">
+                    <div id="world-main-view" class="world-main-view">
+                        <img id="world-img" src="./src/img/sweden_world.png" alt="World overview" class="block">
+
+                        <button id="world-play-btn" class="region-btn absolute" style="top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(255,255,255,0.5); border:1px solid rgba(209,213,219,0.7); color:#111; padding:6px 10px; border-radius:999px; font-family: 'Inter', sans-serif; font-weight: 600; z-index:1;">Click</button>
+                    </div>
+
+                    <div id="world-video-view" class="world-video-view">
+                        <button id="world-back-btn" class="absolute" style="font-family: 'Inter', sans-serif; z-index:30; display:none; top:12px; right:12px; padding:4px 12px; background:white; color:#111; border-radius:999px; font-size:0.75rem; font-weight:600; box-shadow:0 1px 4px rgba(0,0,0,0.15); border:none; cursor:pointer;">Back</button>
+
+                        <video id="world-zoom-in-video" class="world-video-layer" playsinline muted preload="auto">
+                            <source src="./src/videos/teaser/zoom_in_sweden.mp4" type="video/mp4">
+                        </video>
+                        <video id="world-main-video" class="world-video-layer" playsinline muted preload="auto" loop>
+                            <source src="./src/videos/teaser/sweden.mp4" type="video/mp4">
+                        </video>
+                        <video id="world-zoom-out-video" class="world-video-layer" playsinline muted preload="auto">
+                            <source src="./src/videos/teaser/zoom_out_sweden.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-gray-700 text-sm md:text-base px-2 md:px-4 max-w-4xl mx-auto text-justify leading-relaxed">
+                <strong>Overview of LivingWorld.</strong> LivingWorld generates dynamic 4D scenes from a single image by progressively expanding the scene while maintaining globally coherent environmental dynamics. 
+                We demonstrate results with scene-scale motions such as water, clouds, and smoke, rendered under moving viewpoints. 
+                Our method preserves spatial and temporal consistency across views, enabling interactive and physically plausible 4D world generation.
+            </p>
+        </section>
+
+        
+
+        <section id="abstract" class="mb-16 md:mb-24 scroll-mt-24">
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl md:rounded-3xl px-6 py-6 md:px-10 md:py-8 shadow-sm border border-indigo-50">
+                <h2 class="text-2xl md:text-3xl font-extrabold mb-3 md:mb-5 text-center text-gray-900">Abstract</h2>
+                <p id="abstract-text" class="text-gray-700 text-sm md:text-base leading-relaxed text-justify mobile-clamp transition-all duration-300">
+                    We introduce LivingWorld, an interactive framework for generating 4D worlds with environmental dynamics from a single image. While recent advances in 3D scene generation enable large-scale environment creation, most approaches focus primarily on reconstructing static geometry, leaving scene-scale environmental dynamics such as clouds, water, or smoke largely unexplored.
+                    Modeling such dynamics is challenging because motion must remain coherent across an expanding scene while supporting low-latency user feedback.
+                    LivingWorld addresses this challenge by progressively constructing a globally coherent motion field as the scene expands.
+                    To maintain global consistency during expansion, we introduce a geometry-aware alignment module that resolves directional and scale ambiguities across views. We further represent motion using a compact hash-based motion field, enabling efficient querying and stable propagation of dynamics throughout the scene.
+                    This representation also supports bidirectional motion propagation during rendering, producing long and temporally coherent 4D sequences without relying on expensive video-based refinement. On a single RTX 5090 GPU, generating each new scene expansion step requires 9 seconds, followed by 3 seconds for motion alignment and motion field updates, enabling interactive 4D world generation with globally coherent environmental dynamics. Additional dynamic results are provided in the supplementary video.
+                <div class="text-center mt-2">
+                    <button id="read-more-btn" class="text-indigo-600 font-semibold text-sm md:hidden hover:text-indigo-800" onclick="toggleAbstract()">Read More</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="method" class="mb-16 md:mb-24 scroll-mt-24">
+
+                <!-- Title -->
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">
+                Method
+            </h2>
+
+            <!-- ================= Overview ================= -->
+            <div class="glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8 md:mb-12">
+
+                <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 text-center">
+                    Interactive 4D World Generation
+                </h3>
+
+                <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
+                    LivingWorld constructs a globally consistent motion field during scene expansion.
+                    Starting from a single image, we progressively expand the scene and estimate motion from user interactions.
+                    To ensure consistency across views, we introduce a geometry-aware alignment module that resolves directional and scale ambiguities.
+                    We further represent motion using a compact hash-based field, enabling efficient and stable propagation of dynamics.
+                    This allows temporally coherent and view-consistent 4D world generation.
+                </p>
+                <br>
+
+                <img src="./src/img/overallframe.png"
+                    alt="LivingWorld Pipeline"
+                    class="w-full h-auto object-contain rounded-xl">
+
+            </div>
+
+
+            <!-- ================= Alignment Module ================= -->
+            <div class="glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8 md:mb-12">
+
+                <div class="flex flex-col md:flex-row items-center gap-6">
+
+                    <!-- Image -->
+                    <div class="w-full md:w-1/2">
+                        <img src="./src/img/align.png"
+                            alt="Geometry-aware Alignment"
+                            class="w-full h-auto object-contain rounded-xl">
+                    </div>
+
+                    <!-- Text -->
+                    <div class="w-full md:w-1/2">
+
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3">
+                            Geometry-Aware Alignment
+                        </h3>
+
+                        <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
+                            Our alignment module resolves directional and scale ambiguities across views.
+                            By matching overlapping regions between newly expanded and existing scenes,
+                            we enforce globally consistent motion during scene growth.
+                            This enables stable integration of motion across the entire scene.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= Motion Field ================= -->
+            <div class="glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl">
+
+                <div class="flex flex-col md:flex-row items-center gap-6">
+
+                    <!-- Image -->
+                    <div class="w-full md:w-1/2">
+                        <img src="./src/img/motion_field.png"
+                            alt="Hash-based Motion Field"
+                            class="w-full h-auto object-contain rounded-xl">
+                    </div>
+
+                    <!-- Text -->
+                    <div class="w-full md:w-1/2">
+
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3">
+                            Hash-based Motion Field
+                        </h3>
+
+                        <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
+                            We represent motion as a continuous hash-based field,
+                            enabling efficient querying and stable propagation of dynamics.
+                            The field supports bidirectional motion integration,
+                            producing long and temporally coherent 4D sequences during rendering.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="hero is-small" id="results-section">
+            <div class="hero-body">
+                <div class="container">
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Results</h2>
+                    
+                    <figure class="image">
+                        <figcaption>
+                            WonderPlay generates dynamic 3D scenes from a single image and input actions. 
+                            It predicts the physical consequences of the input actions.
+                            Here, we present video results rendered with a moving camera, overlaid with action visualizations. 
+                        </figcaption>
+                    </figure>
+
+                    
+
+                    <!-- Scene buttons -->
+                    <div class="video-gallery-buttons" id="gallery-buttons-results">
+                        <button class="scene-button is-primary" data-video-index="0">
+                            <img src="./src/img/patagonia.png" alt="Scene 1">
+                        </button>
+                        <button class="scene-button" data-video-index="1">
+                            <img src="./src/img/waterfall12.png" alt="Scene 2">
+                        </button>
+                        <button class="scene-button" data-video-index="2">
+                            <img src="./src/img/alpine.png" alt="Scene 3">
+                        </button>
+                        <button class="scene-button" data-video-index="3">
+                            <img src="./src/img/cloud11.png" alt="Scene 4">
+                        </button>
+                        <button class="scene-button" data-video-index="4">
+                            <img src="./src/img/smoke_fire10.png" alt="Scene 5">
+                        </button>
+                    </div>
+
+                    <!-- Video gallery carousel -->
+                    <div class="video-gallery-carousel" id="gallery-carousel-results">
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/patagonia.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/waterfall.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/alpine.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/cloud.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <div class="image-video-pair" style="justify-content: center;">
+                                
+                                <div class="video-container">
+                                    <video preload="none" controls="" muted="" loop="" autoplay="">
+                                        <source data-src="./src/videos/smoke_fire.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <br>
+        <br>
+        <br>
+        <section id="object-centric-motion" class="mb-16 md:mb-24 scroll-mt-24">
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Integration with Object-Centric Motion</h2>
+
+            <div class="flex flex-col gap-8 md:gap-12" style="align-items: center;">
+                <div class="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl flex flex-col" style="width: min(95vw, 640px);">
+                    <div class="rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-6 flex items-center justify-center mx-auto" style="background: transparent; border: none; box-shadow: none; width: 100%;">
+                        <video autoplay="" loop="" muted="" playsinline="" controls="" class="w-full max-w-full h-auto object-contain rounded-xl pointer-events-auto" style="width: 100%;">
+                            <source src="./src/videos/flag.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <!-- <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">Large-scale Synthetic Dataset</h3> -->
+                    <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
+                        While LivingWorld primarily models scene-scale environmental dynamics such as water, clouds, and smoke,
+                        it can also incorporate object-centric motion.
+                        Rather than representing all motion within a single field, we align object and environmental motions
+                        in world coordinates by enforcing consistent scale and spatial alignment.
+                        This allows independently modeled motions to be coherently integrated within the same scene,
+                        maintaining consistency across viewpoints and scene expansion.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="hero is-small" id="comparison-section">
+            <div class="hero-body">
+                <div class="container">
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Comparisons with Baseline Methods</h2>
+
+                    <figure class="image">
+                        <figcaption>
+                            We compare LivingWorld against video and 4D scene generation baselines.
+                            Video models often suffer from inconsistent 3D geometry, unnatural motion dynamics, and limited camera controllability,
+                            while 4D scene baselines are limited in scene scale, motion diversity, or runtime.
+                            LivingWorld maintains a coherent 3D representation with physically consistent dynamics and precise control over camera motion.
+                        </figcaption>
+                    </figure>
+                    <div class="quanti-subsection">
+                        <h3>Quantitative Evaluation</h3>
+                            <p class="quanti-desc">
+                                We evaluate LivingWorld against video- and 4D-scene-generation baselines on 60 expanded scenes.
+                                <strong>VBench</strong> measures imaging quality, aesthetic, motion smoothness, and temporal flicker;
+                                <strong>PhysReal</strong> is a GPT-based assessment of physical realism;
+                                <strong>Runtime</strong> is per-scene generation time.
+                                LivingWorld attains the best or comparable scores across all dimensions while being orders of magnitude faster.
+                            </p>
+                            <div class="quanti-table-wrap">
+                                <table class="quanti-table">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Category</th>
+                                            <th rowspan="2">Method</th>
+                                            <th colspan="4" class="group-header">VBench (↑)</th>
+                                            <th rowspan="2">PhysReal (↑)</th>
+                                            <th rowspan="2">Runtime (↓)</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Imaging</th>
+                                            <th>Aesthetic</th>
+                                            <th>Motion</th>
+                                            <th>Flicker</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td rowspan="3" class="category-cell">Video</td>
+                                            <td class="method-cell">Veo 3.1</td>
+                                            <td><strong>0.694</strong></td>
+                                            <td><u>0.625</u></td>
+                                            <td>0.992</td>
+                                            <td>0.979</td>
+                                            <td><u>0.622</u></td>
+                                            <td><u>140</u></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="method-cell">CogVideoX</td>
+                                            <td><u>0.677</u></td>
+                                            <td>0.611</td>
+                                            <td>0.991</td>
+                                            <td>0.983</td>
+                                            <td>0.575</td>
+                                            <td>1510</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="method-cell">Tora</td>
+                                            <td>0.649</td>
+                                            <td>0.609</td>
+                                            <td>0.992</td>
+                                            <td>0.976</td>
+                                            <td>0.571</td>
+                                            <td>550</td>
+                                        </tr>
+                                        <tr class="category-sep">
+                                            <td rowspan="3" class="category-cell">4D Scene</td>
+                                            <td class="method-cell">4DGS-Cinemagraphy</td>
+                                            <td>0.637</td>
+                                            <td>0.604</td>
+                                            <td><strong>0.996</strong></td>
+                                            <td><u>0.988</u></td>
+                                            <td>0.605</td>
+                                            <td>1980</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="method-cell">PerpetualWonder</td>
+                                            <td>0.553</td>
+                                            <td>0.553</td>
+                                            <td>0.979</td>
+                                            <td>0.972</td>
+                                            <td>0.554</td>
+                                            <td>3580</td>
+                                        </tr>
+                                        <tr class="ours-row">
+                                            <td class="method-cell">LivingWorld</td>
+                                            <td>0.673</td>
+                                            <td><strong>0.639</strong></td>
+                                            <td><u>0.995</u></td>
+                                            <td><strong>0.989</strong></td>
+                                            <td><strong>0.655</strong></td>
+                                            <td><strong>12</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p class="quanti-note">
+                                    <strong>Bold</strong>: best&nbsp;&nbsp;&nbsp;<u>underline</u>: second best&nbsp;&nbsp;&nbsp;Runtime is in seconds.
+                                </p>
+                            </div>
+                    </div>
+
+
+                    <div class="human-study">
+                        <h3>Human Study (2AFC)</h3>
+                        <p class="study-desc">
+                            Values indicate the percentage of participants who preferred <strong>LivingWorld</strong> over each baseline. Outer arcs show 95% Wilson confidence intervals over participants.
+                        </p>
+
+                        <!-- DISABLED: 170-participant Study (bar view) — donut view below is the primary visualization
+                        <div class="study-group">
+                            <h4 class="study-group-title">170-participant Study <span class="n"></span></h4>
+                            <div class="study-grid">
+
+                                <div class="study-card">
+                                    <h4>CogVideoX</h4>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Physics Plausibility</span><span class="value">78%<span class="ci">(±6.2)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill physics" style="width:78%;"></div>
+                                            <div class="ci-whisker" style="left:71.8%; width:12.4%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Motion Fidelity</span><span class="value">73%<span class="ci">(±6.6)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill motion" style="width:73%;"></div>
+                                            <div class="ci-whisker" style="left:66.4%; width:13.2%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="study-card">
+                                    <h4>Tora</h4>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Physics Plausibility</span><span class="value">75%<span class="ci">(±6.5)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill physics" style="width:75%;"></div>
+                                            <div class="ci-whisker" style="left:68.5%; width:13.0%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Motion Fidelity</span><span class="value">80%<span class="ci">(±6.0)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill motion" style="width:80%;"></div>
+                                            <div class="ci-whisker" style="left:74.0%; width:12.0%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="study-card">
+                                    <h4>Veo 3.1</h4>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Physics Plausibility</span><span class="value">72%<span class="ci">(±6.7)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill physics" style="width:72%;"></div>
+                                            <div class="ci-whisker" style="left:65.3%; width:13.4%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Motion Fidelity</span><span class="value">72%<span class="ci">(±6.7)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill motion" style="width:72%;"></div>
+                                            <div class="ci-whisker" style="left:65.3%; width:13.4%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        -->
+
+                        <!-- 170-participant Study (Donut view) -->
+                        <!-- <div class="study-group">
+                            <h4 class="study-group-title">170-participant Study <span class="n"></span></h4>
+                            <div class="donut-grid-3">
+
+                                <div class="donut-card large">
+                                    <h4>CogVideoX</h4>
+                                    <div class="donut-row">
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 4.93 59.19 A 46 46 0 0 1 11.47 24.87" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.67 42.88" class="donut-mean physics" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">78%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.2</text>
+                                            </svg>
+                                            <div class="donut-metric">Physics Plausibility</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 10.55 73.66 A 46 46 0 0 1 5.91 36.89" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.30 54.76" class="donut-mean motion" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">73%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.6</text>
+                                            </svg>
+                                            <div class="donut-metric">Motion Fidelity</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="donut-card large">
+                                    <h4>Tora</h4>
+                                    <div class="donut-row">
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 7.78 68.27 A 46 46 0 0 1 7.78 31.73" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.00 50.00" class="donut-mean physics" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">75%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.5</text>
+                                            </svg>
+                                            <div class="donut-metric">Physics Plausibility</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 4.09 52.89 A 46 46 0 0 1 14.56 20.68" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 13.86 38.26" class="donut-mean motion" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">80%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.0</text>
+                                            </svg>
+                                            <div class="donut-metric">Motion Fidelity</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="donut-card large">
+                                    <h4>Veo 3.1</h4>
+                                    <div class="donut-row">
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 12.28 76.33 A 46 46 0 0 1 5.24 39.40" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.67 57.12" class="donut-mean physics" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">72%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.7</text>
+                                            </svg>
+                                            <div class="donut-metric">Physics Plausibility</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 12.28 76.33 A 46 46 0 0 1 5.24 39.40" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.67 57.12" class="donut-mean motion" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">72%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.7</text>
+                                            </svg>
+                                            <div class="donut-metric">Motion Fidelity</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div> -->
+
+                        <!-- DISABLED: 95-participant Study (bar view) — donut view below is the primary visualization
+                        <div class="study-group">
+                            <h4 class="study-group-title">95-participant Study <span class="n"></span></h4>
+                            <div class="study-grid-5">
+
+                                <div class="study-card compact">
+                                    <h4>CogVideoX</h4>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Imaging</span><span class="value">68%<span class="ci">(±9.0)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill imaging" style="width:68%;"></div>
+                                            <div class="ci-whisker" style="left:59.0%; width:18.0%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Aesthetic</span><span class="value">73%<span class="ci">(±8.6)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill aesthetic" style="width:73%;"></div>
+                                            <div class="ci-whisker" style="left:64.4%; width:17.2%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Motion</span><span class="value">66%<span class="ci">(±9.1)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill motion-95" style="width:66%;"></div>
+                                            <div class="ci-whisker" style="left:56.9%; width:18.2%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Flicker</span><span class="value">78%<span class="ci">(±8.0)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill flicker" style="width:78%;"></div>
+                                            <div class="ci-whisker" style="left:70.0%; width:16.0%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="study-card compact">
+                                    <h4>Tora</h4>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Imaging</span><span class="value">77%<span class="ci">(±8.2)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill imaging" style="width:77%;"></div>
+                                            <div class="ci-whisker" style="left:68.8%; width:16.4%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Aesthetic</span><span class="value">79%<span class="ci">(±7.9)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill aesthetic" style="width:79%;"></div>
+                                            <div class="ci-whisker" style="left:71.1%; width:15.8%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Motion</span><span class="value">76%<span class="ci">(±8.3)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill motion-95" style="width:76%;"></div>
+                                            <div class="ci-whisker" style="left:67.7%; width:16.6%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Flicker</span><span class="value">84%<span class="ci">(±7.2)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill flicker" style="width:84%;"></div>
+                                            <div class="ci-whisker" style="left:76.8%; width:14.4%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="study-card compact">
+                                    <h4>Veo 3.1</h4>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Imaging</span><span class="value">58%<span class="ci">(±9.5)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill imaging" style="width:58%;"></div>
+                                            <div class="ci-whisker" style="left:48.5%; width:19.0%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Aesthetic</span><span class="value">66%<span class="ci">(±9.1)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill aesthetic" style="width:66%;"></div>
+                                            <div class="ci-whisker" style="left:56.9%; width:18.2%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Motion</span><span class="value">72%<span class="ci">(±8.7)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill motion-95" style="width:72%;"></div>
+                                            <div class="ci-whisker" style="left:63.3%; width:17.4%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Flicker</span><span class="value">75%<span class="ci">(±8.4)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill flicker" style="width:75%;"></div>
+                                            <div class="ci-whisker" style="left:66.6%; width:16.8%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="study-card compact">
+                                    <h4>4DGS-Cinematic</h4>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Imaging</span><span class="value">73%<span class="ci">(±8.6)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill imaging" style="width:73%;"></div>
+                                            <div class="ci-whisker" style="left:64.4%; width:17.2%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Aesthetic</span><span class="value">75%<span class="ci">(±8.4)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill aesthetic" style="width:75%;"></div>
+                                            <div class="ci-whisker" style="left:66.6%; width:16.8%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Motion</span><span class="value">68%<span class="ci">(±9.0)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill motion-95" style="width:68%;"></div>
+                                            <div class="ci-whisker" style="left:59.0%; width:18.0%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Flicker</span><span class="value">74%<span class="ci">(±8.5)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill flicker" style="width:74%;"></div>
+                                            <div class="ci-whisker" style="left:65.5%; width:17.0%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="study-card compact">
+                                    <h4>PerpetualWonder</h4>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Imaging</span><span class="value">82%<span class="ci">(±7.5)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill imaging" style="width:82%;"></div>
+                                            <div class="ci-whisker" style="left:74.5%; width:15.0%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Aesthetic</span><span class="value">87%<span class="ci">(±6.6)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill aesthetic" style="width:87%;"></div>
+                                            <div class="ci-whisker" style="left:80.4%; width:13.2%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Motion</span><span class="value">85%<span class="ci">(±7.0)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill motion-95" style="width:85%;"></div>
+                                            <div class="ci-whisker" style="left:78.0%; width:14.0%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="metric-row">
+                                        <div class="metric-label"><span>Flicker</span><span class="value">92%<span class="ci">(±5.4)</span></span></div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill flicker" style="width:92%;"></div>
+                                            <div class="ci-whisker" style="left:86.6%; width:10.8%;"><span class="bar"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        -->
+
+                        <!-- 95-participant Study (Donut view) -->
+                        <div class="study-group">
+                            <h4 class="study-group-title">95-participant Study <span class="n"></span></h4>
+                            <div class="donut-grid">
+
+                                <div class="donut-card">
+                                    <h4>CogVideoX</h4>
+                                    <div class="donut-row">
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 25.35 88.84 A 46 46 0 0 1 4.36 44.23" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 15.62 66.18" class="donut-mean imaging" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">68%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±9.0</text>
+                                            </svg>
+                                            <div class="donut-metric">Imaging</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 13.83 78.42 A 46 46 0 0 1 7.90 31.47" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.30 54.76" class="donut-mean aesthetic" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">73%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.6</text>
+                                            </svg>
+                                            <div class="donut-metric">Aesthetic</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 30.68 91.74 A 46 46 0 0 1 4.00 49.71" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 17.92 70.36" class="donut-mean motion-95" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">66%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±9.1</text>
+                                            </svg>
+                                            <div class="donut-metric">Motion</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 6.25 64.21 A 46 46 0 0 1 14.56 20.68" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.67 42.88" class="donut-mean flicker" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">78%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.0</text>
+                                            </svg>
+                                            <div class="donut-metric">Flicker</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="donut-card">
+                                    <h4>Tora</h4>
+                                    <div class="donut-row">
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 7.45 67.47 A 46 46 0 0 1 13.13 22.50" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.30 45.24" class="donut-mean imaging" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">77%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.2</text>
+                                            </svg>
+                                            <div class="donut-metric">Imaging</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 5.37 61.16 A 46 46 0 0 1 16.27 18.72" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 13.19 40.55" class="donut-mean aesthetic" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">79%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±7.9</text>
+                                            </svg>
+                                            <div class="donut-metric">Aesthetic</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 8.75 70.37 A 46 46 0 0 1 11.63 24.62" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.07 47.61" class="donut-mean motion-95" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">76%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.3</text>
+                                            </svg>
+                                            <div class="donut-metric">Motion</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 4.29 44.81 A 46 46 0 0 1 25.84 10.85" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 17.92 29.64" class="donut-mean flicker" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">84%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±7.2</text>
+                                            </svg>
+                                            <div class="donut-metric">Flicker</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="donut-card">
+                                    <h4>Veo 3.1</h4>
+                                    <div class="donut-row">
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 54.33 95.80 A 46 46 0 0 1 9.01 70.88" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 31.69 83.30" class="donut-mean imaging" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">58%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±9.5</text>
+                                            </svg>
+                                            <div class="donut-metric">Imaging</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 30.68 91.74 A 46 46 0 0 1 4.00 49.71" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 17.92 70.36" class="donut-mean aesthetic" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">66%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±9.1</text>
+                                            </svg>
+                                            <div class="donut-metric">Aesthetic</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 15.88 80.85 A 46 46 0 0 1 6.92 33.88" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.67 57.12" class="donut-mean motion-95" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">72%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.7</text>
+                                            </svg>
+                                            <div class="donut-metric">Motion</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 10.26 73.17 A 46 46 0 0 1 10.26 26.83" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.00 50.00" class="donut-mean flicker" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">75%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.4</text>
+                                            </svg>
+                                            <div class="donut-metric">Flicker</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="donut-card">
+                                    <h4>4DGS-Cinematic</h4>
+                                    <div class="donut-row">
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 13.83 78.42 A 46 46 0 0 1 7.90 31.47" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.30 54.76" class="donut-mean imaging" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">73%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.6</text>
+                                            </svg>
+                                            <div class="donut-metric">Imaging</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 10.26 73.17 A 46 46 0 0 1 10.26 26.83" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.00 50.00" class="donut-mean aesthetic" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">75%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.4</text>
+                                            </svg>
+                                            <div class="donut-metric">Aesthetic</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 25.35 88.84 A 46 46 0 0 1 4.36 44.23" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 15.62 66.18" class="donut-mean motion-95" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">68%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±9.0</text>
+                                            </svg>
+                                            <div class="donut-metric">Motion</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 11.95 75.86 A 46 46 0 0 1 9.01 29.12" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 12.07 52.39" class="donut-mean flicker" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">74%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±8.5</text>
+                                            </svg>
+                                            <div class="donut-metric">Flicker</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="donut-card">
+                                    <h4>PerpetualWonder</h4>
+                                    <div class="donut-row">
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 4.02 51.44 A 46 46 0 0 1 21.81 13.65" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 15.62 33.82" class="donut-mean imaging" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">82%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±7.5</text>
+                                            </svg>
+                                            <div class="donut-metric">Imaging</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 6.62 34.69 A 46 46 0 0 1 32.00 7.67" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 22.30 23.99" class="donut-mean aesthetic" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">87%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±6.6</text>
+                                            </svg>
+                                            <div class="donut-metric">Aesthetic</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 4.81 41.38 A 46 46 0 0 1 27.84 9.69" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 19.26 27.66" class="donut-mean motion-95" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">85%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±7.0</text>
+                                            </svg>
+                                            <div class="donut-metric">Motion</div>
+                                        </div>
+                                        <div class="donut-item">
+                                            <svg viewBox="0 0 100 100" class="donut">
+                                                <circle cx="50" cy="50" r="38" class="donut-bg" stroke-width="9"/>
+                                                <path d="M 15.69 19.36 A 46 46 0 0 1 42.52 4.61" class="donut-ci-arc" stroke-width="3" stroke-linecap="round"/>
+                                                <path d="M 50.00 12.00 A 38 38 0 1 1 31.69 16.70" class="donut-mean flicker" stroke-width="9" stroke-linecap="round"/>
+                                                <text x="50" y="52" text-anchor="middle" class="donut-value">92%</text>
+                                                <text x="50" y="64" text-anchor="middle" class="donut-ci-label">±5.4</text>
+                                            </svg>
+                                            <div class="donut-metric">Flicker</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    
+
+                    <!-- Second row of buttons -->
+                    <div class="video-gallery-buttons" id="comparison-scene-buttons">
+                        <h3>Qualitative Comparison</h3>
+                        <br>
+                        <button class="scene-button is-primary" data-video-index="0">
+                            <img src="./src/img/alpine.png" alt="Scene 1">
+                        </button>
+                        <button class="scene-button" data-video-index="3">
+                            <img src="./src/img/como.png" alt="Scene 2">
+                        </button>
+                    </div>
+
+                    <div class="video-gallery-buttons" id="gallery-buttons-nvs">
+                        
+                        <button class="button is-two-line is-primary" data-video-index="0">
+                            Ours vs CogVideoX 
+                        </button>
+                        <button class="button is-two-line" data-video-index="1">
+                            Ours vs Tora
+                        </button>
+                        <button class="button is-two-line" data-video-index="2">
+                            Ours vs Veo3.1
+                        </button>
+
+                    </div>
+
+                    <div class="camera-prompt" style="display:inline-flex; align-items:center; gap:0.35em;">
+                        <img src="./src/img/trajectory.svg" alt="camera prompt icon" class="prompt-icon" style="width:8em; height:auto; display:inline-block; vertical-align:middle;">
+                        <span class="prompt-text">"Pan to the right"</span>
+                    </div>
+                    <br>
+
+                    <!-- Video gallery carousel with 20 items -->
+                    <div class="video-gallery-carousel" id="gallery-carousel-nvs">
+                        <div class="video-gallery-item active">
+
+                            <video preload="none" controls="" muted="" loop="" height="100%" autoplay="">
+                                <source src="./src/videos/alpine/cog_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">CogVideoX</div>
+                            </div>
+                        </div>
+                        <div class="video-gallery-item">
+                            <video preload="none" controls="" muted="" loop="" height="100%">
+                                <source src="./src/videos/alpine/Tora_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">Tora</div>
+                            </div>
+                        </div>
+                        <div class="video-gallery-item">
+                            <video preload="none" controls="" muted="" loop="" height="100%">
+                                <source src="./src/videos/alpine/veo_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">Veo3.1</div>
+                            </div>
+                        </div>
+
+                        <div class="video-gallery-item">
+                            <video preload="none" controls="" muted="" loop="" height="100%">
+                                <source data-src="./src/videos/como/cog_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">CogVideoX</div>
+                            </div>
+                        </div>
+                        <div class="video-gallery-item">
+                            <video preload="none" controls="" muted="" loop="" height="100%">
+                                <source data-src="./src/videos/como/Tora_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">Tora</div>
+                            </div>
+                        </div>
+                        <div class="video-gallery-item">
+                            <video preload="none" controls="" muted="" loop="" height="100%">
+                                <source data-src="./src/videos/como/veo_ours.mp4" type="video/mp4">
+                            </video>
+                            <div class="video-caption">
+                                <div class="caption-left">Ours</div>
+                                <div class="caption-right">Veo3.1</div>
+                            </div>
+                        </div>
+
+             
+                    </div>
+                </div>
+            </div>
+        </section>
+        <br>
+        <br>
+
+        <section id="interactivity-study" class="mb-12 md:mb-16">
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-6 md:mb-8 text-center text-gray-900">Interactivity User Study</h2>
+            <p class="interactivity-desc">
+                We conduct an interactivity user study to evaluate our GUI for interactive 4D world generation.
+                Participants used our interface to author and explore dynamic scenes, and rated their experience on a 7-point Likert scale (1 = Strongly Disagree, 7 = Strongly Agree) across three dimensions: <strong>Usability</strong>, <strong>Controllability</strong>, and <strong>Usefulness</strong>.
+                LivingWorld achieves consistently positive ratings across all dimensions, suggesting that the added 4D controls remain practically usable.
+            </p>
+            <div class="radar-wrap">
+                <svg viewBox="0 0 440 410" class="radar" xmlns="http://www.w3.org/2000/svg">
+                    <polygon class="radar-grid" points="220.00,196.43 236.08,224.29 203.92,224.29"/>
+                    <polygon class="radar-grid" points="220.00,177.86 252.17,233.57 187.83,233.57"/>
+                    <polygon class="radar-grid" points="220.00,159.29 268.25,242.86 171.75,242.86"/>
+                    <polygon class="radar-grid" points="220.00,140.71 284.33,252.14 155.67,252.14"/>
+                    <polygon class="radar-grid" points="220.00,122.14 300.42,261.43 139.58,261.43"/>
+                    <polygon class="radar-grid" points="220.00,103.57 316.50,270.71 123.50,270.71"/>
+                    <polygon class="radar-grid" points="220.00,85.00 332.58,280.00 107.42,280.00"/>
+                    <line class="radar-axis" x1="220" y1="215" x2="220.00" y2="85.00"/>
+                    <line class="radar-axis" x1="220" y1="215" x2="332.58" y2="280.00"/>
+                    <line class="radar-axis" x1="220" y1="215" x2="107.42" y2="280.00"/>
+                    <polygon class="radar-ci-band" points="220.00,86.86 332.58,280.00 107.42,280.00"/>
+                    <polygon class="radar-mean" points="220.00,110.07 314.89,269.79 123.50,270.71"/>
+                    <circle class="radar-vertex" cx="220.00" cy="110.07" r="4"/>
+                    <circle class="radar-vertex" cx="314.89" cy="269.79" r="4"/>
+                    <circle class="radar-vertex" cx="123.50" cy="270.71" r="4"/>
+                    <text class="radar-tick" x="210.00" y="199.43">1</text>
+                    <text class="radar-tick" x="210.00" y="162.29">3</text>
+                    <text class="radar-tick" x="210.00" y="125.14">5</text>
+                    <text class="radar-tick" x="210.00" y="88.00">7</text>
+                    <text class="radar-axis-label" x="220.00" y="57.00">Usability</text>
+                    <text class="radar-score" x="220.00" y="73.00">5.65</text>
+                    <text class="radar-score-ci" x="220.00" y="86.00">(±1.25)</text>
+                    <text class="radar-axis-label" x="353.37" y="296.00">Controllability</text>
+                    <text class="radar-score" x="353.37" y="312.00">5.90</text>
+                    <text class="radar-score-ci" x="353.37" y="325.00">(±1.42)</text>
+                    <text class="radar-axis-label" x="86.63" y="296.00">Usefulness</text>
+                    <text class="radar-score" x="86.63" y="312.00">6.00</text>
+                    <text class="radar-score-ci" x="86.63" y="325.00">(±1.21)</text>
+                    <text class="radar-center-label" x="220" y="201">Avg.</text>
+                    <text class="radar-center-value" x="220" y="227">5.85</text>
+                    <text class="radar-center-ci" x="220" y="245">(± 1.30)</text>
+                </svg>
+            </div>
+            <figure class="survey-form-wrap">
+                <img src="./src/img/user_study.png" alt="Interactivity user study survey form" loading="lazy">
+                <figcaption class="survey-form-caption">Survey form distributed to participants in the interactivity user study.</figcaption>
+            </figure>
+        </section>
+        <br>
+
+        <section id="gui-demo" class="mb-8 md:mb-12">
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">GUI Demo</h2>
+            <div class="w-full bg-white rounded-2xl md:rounded-3xl mb-4 md:mb-6 shadow-lg border border-gray-100 p-3 md:p-5 flex items-center justify-center">
+                <video autoplay loop muted playsinline class="w-full h-auto object-contain rounded-lg md:rounded-xl">
+                    <source src="./src/videos/GUI.mp4" type="video/mp4">
+                </video>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-900">Citation</h2>
+            <div class="bg-gray-900 p-6 md:p-8 rounded-2xl shadow-xl relative group">
+                <button onclick="copyBib()" id="copyBtn" class="absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded transition opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100">Copy</button>
+                <pre><code id="bibText" class="text-xs md:text-sm text-gray-300 font-mono leading-relaxed overflow-x-auto block">@article{mun2026livingworld,
+                title={LivingWorld: Interactive 4D World Generation with Environmental Dynamics},
+                author={Mun, Hyeongju and Jin, In-Hwan and Kim, Sohyeong and Kong, Kyeongbo},
+                journal={arXiv preprint arXiv:2604.01641},
+                year={2026}
+                }</code></pre>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('hidden');
+    }
+    function closeMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.add('hidden');
+    }
+    function toggleAbstract() {
+        const abstractContent = document.getElementById('abstract-content');
+        const toggleText = document.getElementById('toggle-text');
+        abstractContent.classList.toggle('expanded');
+        toggleText.textContent = abstractContent.classList.contains('expanded') ? 'Show less' : 'Show more';
+    }
+    function copyBib() {
+        const bib = document.getElementById('bibtex-content').innerText;
+        navigator.clipboard.writeText(bib).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            const original = btn.innerHTML;
+            btn.innerHTML = 'Copied!';
+            setTimeout(() => {
+                btn.innerHTML = original;
+            }, 1500);
+        });
+    }
+
+    // === world image <-> teaser video sequence ===
+    const worldMainView = document.getElementById('world-main-view');
+    const worldVideoView = document.getElementById('world-video-view');
+    const worldPlayBtn = document.getElementById('world-play-btn');
+    const worldBackBtn = document.getElementById('world-back-btn');
+    const worldImg = document.getElementById('world-img');
+    const worldSceneButtons = Array.from(document.querySelectorAll('#world-scene-buttons .world-scene-button'));
+    const worldZoomInVideo = document.getElementById('world-zoom-in-video');
+    const worldMainVideo = document.getElementById('world-main-video');
+    const worldZoomOutVideo = document.getElementById('world-zoom-out-video');
+
+    if (worldMainView && worldVideoView && worldPlayBtn && worldBackBtn && worldZoomInVideo && worldMainVideo && worldZoomOutVideo) {
+        let worldState = 'idle';
+        const worldVideos = [worldZoomInVideo, worldMainVideo, worldZoomOutVideo];
+        const WORLD_FADE_MS = 180;
+        const WORLD_FRAME_WAIT_MS = 2500;
+        const WORLD_START_OFFSET = 0.03;
+
+        const worldMainSource = worldMainVideo.querySelector('source');
+        let worldMainSrc = worldMainSource ? worldMainSource.getAttribute('src') : '';
+        const worldZoomInSource = worldZoomInVideo.querySelector('source');
+        let worldZoomInSrc = worldZoomInSource ? worldZoomInSource.getAttribute('src') : '';
+        const worldZoomOutSource = worldZoomOutVideo.querySelector('source');
+        let worldZoomOutSrc = worldZoomOutSource ? worldZoomOutSource.getAttribute('src') : '';
+
+        const safePlay = (video) => {
+            const playPromise = video.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {});
+            }
+        };
+
+        const waitForFirstFrame = (video, timeoutMs = WORLD_FRAME_WAIT_MS) =>
+            new Promise((resolve) => {
+                let done = false;
+                let timeoutId = null;
+                let frameRequestId = null;
+
+                const finish = (success) => {
+                    if (done) return;
+                    done = true;
+                    if (timeoutId) clearTimeout(timeoutId);
+                    video.removeEventListener('playing', onPlayableTick);
+                    video.removeEventListener('timeupdate', onPlayableTick);
+                    if (frameRequestId !== null && typeof video.cancelVideoFrameCallback === 'function') {
+                        video.cancelVideoFrameCallback(frameRequestId);
+                    }
+                    resolve(success);
+                };
+
+                const onPlayableTick = () => finish(true);
+
+                timeoutId = window.setTimeout(() => finish(false), timeoutMs);
+
+                video.addEventListener('playing', onPlayableTick, { once: true });
+                video.addEventListener('timeupdate', onPlayableTick, { once: true });
+
+                if (typeof video.requestVideoFrameCallback === 'function') {
+                    frameRequestId = video.requestVideoFrameCallback(() => {
+                        finish(true);
+                    });
+                }
+
+                if (video.readyState >= 2 && video.currentTime > 0) {
+                    requestAnimationFrame(() => finish(true));
+                }
+            });
+
+        const waitForPlayableLoad = (video, timeoutMs = 4000) =>
+            new Promise((resolve) => {
+                if (video.readyState >= 3) {
+                    resolve();
+                    return;
+                }
+
+                let done = false;
+                let timeoutId = null;
+
+                const finish = () => {
+                    if (done) return;
+                    done = true;
+                    if (timeoutId) clearTimeout(timeoutId);
+                    video.removeEventListener('loadeddata', checkReady);
+                    video.removeEventListener('canplay', checkReady);
+                    video.removeEventListener('canplaythrough', checkReady);
+                    resolve();
+                };
+
+                const checkReady = () => {
+                    if (video.readyState >= 3) {
+                        finish();
+                    }
+                };
+
+                timeoutId = window.setTimeout(finish, timeoutMs);
+                video.addEventListener('loadeddata', checkReady);
+                video.addEventListener('canplay', checkReady);
+                video.addEventListener('canplaythrough', checkReady);
+            });
+
+        const wait = (ms, callback) => {
+            window.setTimeout(callback, ms);
+        };
+
+        const waitFade = (ms = WORLD_FADE_MS) =>
+            new Promise((resolve) => {
+                wait(ms, resolve);
+            });
+
+        const ensureMainLoaded = () => {
+            if (!worldMainSource || !worldMainSrc) return;
+            if (!worldMainSource.getAttribute('src')) {
+                worldMainSource.setAttribute('src', worldMainSrc);
+                worldMainVideo.load();
+            }
+        };
+
+        const ensureZoomInLoaded = () => {
+            if (!worldZoomInSource || !worldZoomInSrc) return;
+            if (!worldZoomInSource.getAttribute('src')) {
+                worldZoomInSource.setAttribute('src', worldZoomInSrc);
+                worldZoomInVideo.load();
+            }
+        };
+
+        const ensureZoomOutLoaded = () => {
+            if (!worldZoomOutSource || !worldZoomOutSrc) return;
+            if (!worldZoomOutSource.getAttribute('src')) {
+                worldZoomOutSource.setAttribute('src', worldZoomOutSrc);
+                worldZoomOutVideo.load();
+            }
+        };
+
+        const unloadMainVideo = () => {
+            worldMainVideo.pause();
+            worldMainVideo.onended = null;
+            worldMainVideo.classList.remove('active');
+            if (!worldMainSource) return;
+            if (worldMainSource.getAttribute('src')) {
+                worldMainSource.removeAttribute('src');
+                worldMainVideo.load();
+            }
+        };
+
+        const unloadZoomInVideo = () => {
+            worldZoomInVideo.pause();
+            worldZoomInVideo.onended = null;
+            worldZoomInVideo.classList.remove('active');
+            if (!worldZoomInSource) return;
+            if (worldZoomInSource.getAttribute('src')) {
+                worldZoomInSource.removeAttribute('src');
+                worldZoomInVideo.load();
+            }
+        };
+
+        const unloadZoomOutVideo = () => {
+            worldZoomOutVideo.pause();
+            worldZoomOutVideo.onended = null;
+            worldZoomOutVideo.classList.remove('active');
+            if (!worldZoomOutSource) return;
+            if (worldZoomOutSource.getAttribute('src')) {
+                worldZoomOutSource.removeAttribute('src');
+                worldZoomOutVideo.load();
+            }
+        };
+
+        const resetVideo = (video) => {
+            video.pause();
+            video.onended = null;
+            video.classList.remove('active');
+            setTimeout(() => { try { video.currentTime = 0; } catch (e) {} }, 150);
+        };
+
+        const showMainView = () => {
+            worldVideos.forEach((v) => {
+                v.pause();
+                v.onended = null;
+                v.classList.remove('active');
+                try { v.currentTime = 0; } catch (e) {}
+            });
+            worldVideoView.classList.remove('active');
+            worldMainView.classList.remove('hidden');
+            worldPlayBtn.style.display = '';
+            worldBackBtn.style.display = 'none';
+            worldState = 'idle';
+        };
+
+        const setWorldScene = (button) => {
+            if (!button) return;
+
+            const nextMain = button.dataset.worldMain || '';
+            const nextZoomIn = button.dataset.worldZoomIn || nextMain;
+            const nextZoomOut = button.dataset.worldZoomOut || nextMain;
+            const nextImg = button.dataset.worldImg || '';
+
+            if (!nextMain) return;
+
+            showMainView();
+
+            worldSceneButtons.forEach((btn) => btn.classList.remove('is-primary'));
+            button.classList.add('is-primary');
+
+            if (worldImg && nextImg) {
+                worldImg.src = nextImg;
+                if (button.dataset.sceneName) {
+                    worldImg.alt = button.dataset.sceneName + ' world overview';
+                }
+            }
+
+            worldMainSrc = nextMain;
+            worldZoomInSrc = nextZoomIn;
+            worldZoomOutSrc = nextZoomOut;
+
+            if (worldMainSource) worldMainSource.setAttribute('src', worldMainSrc);
+            if (worldZoomInSource) worldZoomInSource.setAttribute('src', worldZoomInSrc);
+            if (worldZoomOutSource) worldZoomOutSource.setAttribute('src', worldZoomOutSrc);
+
+            worldMainVideo.load();
+            worldZoomInVideo.load();
+            worldZoomOutVideo.load();
+        };
+
+        const showVideoView = () => {
+            worldVideoView.classList.add('active');
+            worldPlayBtn.style.display = 'none';
+            worldBackBtn.style.display = 'block';
+        };
+
+        const stopNonTargetVideos = (targetVideo) => {
+            worldVideos.forEach((video) => {
+                if (video !== targetVideo) {
+                    video.pause();
+                    video.onended = null;
+                    video.classList.remove('active');
+                    try { video.currentTime = 0; } catch (e) {}
+                }
+            });
+        };
+
+        const fadeInVideo = async (video, zIndex, fadeMs = WORLD_FADE_MS) => {
+            if (typeof zIndex === 'number') {
+                video.style.zIndex = String(zIndex);
+            }
+            video.classList.remove('active');
+            // Force transition restart so repeated plays still visibly fade in.
+            void video.offsetWidth;
+            video.classList.add('active');
+            await waitFade(fadeMs);
+        };
+
+        const fadeOutVideo = async (video, fadeMs = WORLD_FADE_MS) => {
+            video.classList.remove('active');
+            await waitFade(fadeMs);
+        };
+
+        const playWorldClip = (video, loop, onEnded, zIndex) => {
+            video.loop = loop;
+            video.onended = onEnded;
+            try {
+                video.currentTime = WORLD_START_OFFSET;
+            } catch (error) {
+            }
+            safePlay(video);
+            waitForFirstFrame(video).then(() => {
+                if (!video.paused || loop) {
+                    fadeInVideo(video, zIndex);
+                }
+            });
+        };
+
+        const playClipAfterFirstFrame = async (video, loop, onEnded, zIndex, fadeMs = WORLD_FADE_MS) => {
+            video.loop = loop;
+            video.onended = onEnded;
+            try {
+                video.currentTime = WORLD_START_OFFSET;
+            } catch (error) {
+            }
+            safePlay(video);
+            const hasFrame = await waitForFirstFrame(video);
+            if (!hasFrame) {
+                return false;
+            }
+            if (worldState !== 'idle') {
+                await fadeInVideo(video, zIndex, fadeMs);
+            }
+            return true;
+        };
+
+        const waitForEnded = (video) =>
+            new Promise((resolve) => {
+                const done = () => {
+                    video.removeEventListener('ended', done);
+                    resolve();
+                };
+                video.addEventListener('ended', done, { once: true });
+            });
+
+        const startWorldClipNow = (video, loop, onEnded) => {
+            video.loop = loop;
+            video.onended = onEnded;
+            try {
+                video.currentTime = WORLD_START_OFFSET;
+            } catch (error) {
+            }
+            safePlay(video);
+        };
+
+        worldZoomInVideo.load();
+        unloadZoomOutVideo();
+
+        if (worldSceneButtons.length > 0) {
+            const initialScene = worldSceneButtons.find((btn) => btn.classList.contains('is-primary')) || worldSceneButtons[0];
+            setWorldScene(initialScene);
+            worldSceneButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    setWorldScene(button);
+                });
+            });
+        }
+
+        worldPlayBtn.addEventListener('click', async () => {
+            if (worldState !== 'idle') return;
+
+            showVideoView();
+            worldState = 'zoom-in';
+            stopNonTargetVideos(worldZoomInVideo);
+            ensureZoomInLoaded();
+            ensureMainLoaded();
+            worldMainVideo.style.zIndex = '3';
+
+            const zoomInReady = await playClipAfterFirstFrame(worldZoomInVideo, false, null, 5, 170);
+            if (!zoomInReady || worldState !== 'zoom-in') {
+                showMainView();
+                return;
+            }
+            worldMainView.classList.add('hidden');
+
+            await waitForEnded(worldZoomInVideo);
+            if (worldState !== 'zoom-in') return;
+
+            await waitForPlayableLoad(worldMainVideo);
+            if (worldState !== 'zoom-in') return;
+
+            const mainReady = await playClipAfterFirstFrame(worldMainVideo, true, null, 3, 170);
+            if (!mainReady || worldState !== 'zoom-in') {
+                showMainView();
+                return;
+            }
+
+            await fadeOutVideo(worldZoomInVideo, 170);
+            unloadZoomInVideo();
+            worldState = 'main';
+        });
+
+        worldBackBtn.addEventListener('click', async () => {
+            if (worldState === 'idle' || worldState === 'zoom-out') return;
+
+            worldState = 'zoom-out';
+            ensureZoomOutLoaded();
+            const zoomOutReady = await playClipAfterFirstFrame(worldZoomOutVideo, false, null, 4, 320);
+            if (!zoomOutReady || worldState !== 'zoom-out') {
+                worldState = 'main';
+                return;
+            }
+
+            await fadeOutVideo(worldMainVideo, 220);
+            unloadMainVideo();
+
+            await waitForEnded(worldZoomOutVideo);
+            if (worldState !== 'zoom-out') return;
+
+            worldMainView.classList.remove('hidden');
+            await waitFade();
+            if (worldState !== 'zoom-out') return;
+
+            await fadeOutVideo(worldZoomOutVideo, 220);
+            if (worldState !== 'zoom-out') return;
+            unloadZoomOutVideo();
+            showMainView();
+        });
+    }
+
+    /* ---------------------------
+    New per-scene comparison slider
+    ---------------------------- */
+    const scenes = [
+        {
+            name: "Scene 01",
+            slides: [
+                { title: "CogVideoX", video: "./src/videos/alpine/cog_ours.mp4", desc: "CogVideoX on Scene 01." },
+                { title: "Tora", video: "./src/videos/alpine/Tora_ours.mp4", desc: "Tora on Scene 01." },
+                { title: "Veo3.1", video: "./src/videos/alpine/veo_ours.mp4", desc: "Veo3.1 on Scene 01." }
+            ]
+        },
+        {
+            name: "Scene 02",
+            slides: [
+                { title: "CogVideoX", video: "./src/videos/como/cog_ours.mp4", desc: "CogVideoX on Scene 02." },
+                { title: "Tora", video: "./src/videos/como/Tora_ours.mp4", desc: "Tora on Scene 02." },
+                { title: "Veo3.1", video: "./src/videos/como/veo_ours.mp4", desc: "Veo3.1 on Scene 02." }
+            ]
+        }
+        // scene 10까지 계속 추가
+    ];
+
+    let currentScene = 0;
+    let currentSlide = 0;
+
+    const sceneButtonsEl = document.getElementById("scene-buttons");
+    const sliderEl = document.getElementById("comparison-slider");
+    const dotsEl = document.getElementById("model-dots");
+
+    function renderSceneButtons() {
+        sceneButtonsEl.innerHTML = "";
+
+        scenes.forEach((scene, index) => {
+            const btn = document.createElement("button");
+            btn.textContent = scene.name;
+            btn.className =
+                "px-4 py-2 rounded-full text-sm md:text-base font-semibold transition " +
+                (index === currentScene
+                    ? "bg-indigo-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-indigo-100");
+
+            btn.addEventListener("click", () => {
+                currentScene = index;
+                currentSlide = 0;
+                renderAll();
+            });
+
+            sceneButtonsEl.appendChild(btn);
+        });
+    }
+
+    function renderSlides() {
+        const selectedScene = scenes[currentScene];
+        sliderEl.innerHTML = "";
+
+        selectedScene.slides.forEach((slide) => {
+            const card = document.createElement("div");
+            card.className =
+                "slide-item snap-center shrink-0 w-[92%] md:w-[70%] lg:w-[60%] glass-card p-4 md:p-5 rounded-2xl md:rounded-3xl flex flex-col";
+
+            card.innerHTML = `
+                <div class="mb-4 md:mb-6 overflow-hidden rounded-lg md:rounded-xl border border-gray-100 shadow-sm bg-black flex justify-center items-center">
+                    <video autoplay loop muted playsinline class="w-full h-auto object-contain rounded-lg md:rounded-xl">
+                        <source src="${slide.video}" type="video/mp4">
+                    </video>
+                </div>
+                <div class="mt-auto text-center px-2 md:px-4 pb-2">
+                    <h4 class="text-lg md:text-xl text-gray-900 font-bold mb-1 md:mb-2">${selectedScene.name} · ${slide.title}</h4>
+                    <p class="text-xs md:text-sm text-gray-600">${slide.desc}</p>
+                </div>
+            `;
+
+            sliderEl.appendChild(card);
+        });
+
+        sliderEl.scrollTo({ left: 0, behavior: "auto" });
+    }
+
+    function renderDots() {
+        const selectedScene = scenes[currentScene];
+        dotsEl.innerHTML = "";
+
+        selectedScene.slides.forEach((slide, index) => {
+            const dot = document.createElement("button");
+            dot.textContent = slide.title;
+            dot.className =
+                "px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition " +
+                (index === currentSlide
+                    ? "bg-indigo-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-indigo-100");
+
+            dot.addEventListener("click", () => {
+                const slides = sliderEl.querySelectorAll(".slide-item");
+                if (!slides[index]) return;
+                slides[index].scrollIntoView({
+                    behavior: "smooth",
+                    inline: "center",
+                    block: "nearest"
+                });
+            });
+
+            dotsEl.appendChild(dot);
+        });
+    }
+
+    function updateCurrentSlideFromScroll() {
+        const slides = [...sliderEl.querySelectorAll(".slide-item")];
+        if (!slides.length) return;
+
+        const sliderCenter = sliderEl.scrollLeft + sliderEl.clientWidth / 2;
+
+        let closestIndex = 0;
+        let closestDistance = Infinity;
+
+        slides.forEach((slide, index) => {
+            const slideCenter = slide.offsetLeft + slide.clientWidth / 2;
+            const distance = Math.abs(sliderCenter - slideCenter);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestIndex = index;
+            }
+        });
+
+        if (closestIndex !== currentSlide) {
+            currentSlide = closestIndex;
+            renderDots();
+        }
+    }
+
+    sliderEl.addEventListener("scroll", updateCurrentSlideFromScroll);
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    sliderEl.addEventListener('mousedown', (e) => {
+        isDown = true;
+        sliderEl.classList.add('cursor-grabbing');
+        startX = e.pageX - sliderEl.offsetLeft;
+        scrollLeft = sliderEl.scrollLeft;
+    });
+
+    sliderEl.addEventListener('mouseleave', () => {
+        isDown = false;
+        sliderEl.classList.remove('cursor-grabbing');
+    });
+
+    sliderEl.addEventListener('mouseup', () => {
+        isDown = false;
+        sliderEl.classList.remove('cursor-grabbing');
+    });
+
+    sliderEl.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - sliderEl.offsetLeft;
+        const walk = (x - startX) * 1.2;
+        sliderEl.scrollLeft = scrollLeft - walk;
+    });
+
+    function renderAll() {
+        renderSceneButtons();
+        renderSlides();
+        renderDots();
+    }
+
+    renderAll();
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const resultsSection = document.querySelector("#results-section");
+            if (!resultsSection) return;
+
+            const buttons = resultsSection.querySelectorAll("#gallery-buttons-results .scene-button");
+            const items = resultsSection.querySelectorAll("#gallery-carousel-results .video-gallery-item");
+
+            const activateResultScene = async (index, targetButton = null) => {
+                const activeItem = items[index];
+                if (!activeItem) return;
+
+                items.forEach((item) => {
+                    item.classList.remove("active");
+                    const v = item.querySelector("video");
+                    if (v) {
+                        v.pause();
+                        v.currentTime = 0;
+                    }
+                });
+
+                activeItem.classList.add("active");
+
+                buttons.forEach((btn) => btn.classList.remove("is-primary"));
+                const buttonToActivate = targetButton || buttons[index];
+                if (buttonToActivate) {
+                    buttonToActivate.classList.add("is-primary");
+                }
+
+                const video = activeItem.querySelector("video");
+                const source = activeItem.querySelector("source");
+
+                if (video && source && source.dataset.src && !source.getAttribute("src")) {
+                    source.setAttribute("src", source.dataset.src);
+                    video.load();
+                }
+
+                if (video) {
+                    video.muted = true;
+                    video.playsInline = true;
+                    try {
+                        await video.play();
+                    } catch (e) {
+                        console.log("Autoplay failed:", e);
+                    }
+                }
+            };
+
+            buttons.forEach((button) => {
+                button.addEventListener("click", async function () {
+                    const index = Number(this.dataset.videoIndex);
+                    await activateResultScene(index, this);
+                });
+            });
+
+            const initialButton = resultsSection.querySelector("#gallery-buttons-results .scene-button.is-primary") || buttons[0];
+            if (initialButton) {
+                const initialIndex = Number(initialButton.dataset.videoIndex || 0);
+                activateResultScene(initialIndex, initialButton);
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const comparisonSection = document.querySelector("#comparison-section");
+            if (!comparisonSection) return;
+
+            // const sceneButtons = comparisonSection.querySelectorAll(".video-gallery-buttons:first-of-type .scene-button");
+            const sceneButtons = comparisonSection.querySelectorAll("#comparison-scene-buttons .scene-button");
+            const methodButtons = comparisonSection.querySelectorAll("#gallery-buttons-nvs .button");
+            const items = comparisonSection.querySelectorAll("#gallery-carousel-nvs .video-gallery-item");
+
+            let currentScene = 0;
+
+            sceneButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    currentScene = Number(btn.dataset.videoIndex);
+
+                    sceneButtons.forEach(b => b.classList.remove("is-primary"));
+                    btn.classList.add("is-primary");
+
+                    methodButtons.forEach((b, i) => {
+                        b.classList.remove("is-primary");
+                        if (i === 0) b.classList.add("is-primary");
+                    });
+
+                    updateView(0);
+                });
+            });
+
+            methodButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    methodButtons.forEach(b => b.classList.remove("is-primary"));
+                    btn.classList.add("is-primary");
+
+                    const methodIdx = Number(btn.dataset.videoIndex);
+                    updateView(methodIdx);
+                });
+            });
+
+            function updateView(methodIdx) {
+                const index = currentScene + methodIdx;
+
+                items.forEach(item => {
+                    item.classList.remove("active");
+                    const v = item.querySelector("video");
+                    if (v) {
+                        v.pause();
+                        v.currentTime = 0;
+                    }
+                });
+
+                const activeItem = items[index];
+                if (!activeItem) return;
+
+                activeItem.classList.add("active");
+
+                const video = activeItem.querySelector("video");
+                const source = activeItem.querySelector("source");
+
+                if (video && source && source.dataset.src && !source.getAttribute("src")) {
+                    source.setAttribute("src", source.dataset.src);
+                    video.load();
+                }
+
+                if (video) {
+                    video.muted = true;
+                    video.playsInline = true;
+                    video.play().catch(() => {});
+                }
+            }
+        });
+    </script>
+</body></html>
