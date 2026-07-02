@@ -5,7 +5,7 @@
 [![Project Page](https://img.shields.io/badge/Project-LivingWorld-blue)](https://paper.pnu-cvsp.com/LivingWorld/)
 [![arXiv](https://img.shields.io/badge/arXiv-2604.01641-red)](https://arxiv.org/abs/2604.01641)
 
-Hyeongju Mun* · In-Hwan Jin* · Sohyeong Kim · Kyeongbo Kong†
+[Hyeongju Mun](https://www.pnu-cvsp.com/members/hyeong-ju)* · [In-Hwan Jin](https://www.pnu-cvsp.com/members/inhwan)* · [Sohyeong Kim](https://www.pnu-cvsp.com/members/sohyeong) · [Kyeongbo Kong](https://www.pnu-cvsp.com/prof)†
 
 *Equal contribution. †Corresponding author.
 
@@ -149,7 +149,7 @@ If you use the bundled MoGe depth/normal model and SAM3 modules, their weights a
   ##### **Interactive Motion Generation Step**
 
   <p align="center">
-    <video src="Github.mp4" width="720" autoplay loop muted playsinline controls></video>
+    <img src="Github.gif" alt="Interactive motion generation demo" width="640">
   </p>
 
   This is the main LivingWorld step for adding environmental dynamics. After pressing `R` during spatial generation, the selected view is shown as a paused image for motion annotation.
