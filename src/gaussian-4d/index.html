@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Interactive 4D Gaussian World Viewer</title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: #99c9f0;
+            color: #1f2937;
+            font-family: "Google Sans", "Noto Sans", "Inter", Arial, sans-serif;
+        }
+
+        #canvas {
+            position: absolute;
+            inset: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: #99c9f0;
+            touch-action: none;
+        }
+
+        #spinner {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            display: grid;
+            place-items: center;
+            background: rgba(153, 201, 240, 0.35);
+            pointer-events: none;
+        }
+
+        #spinner.hidden {
+            display: none;
+        }
+
+        .loader-core {
+            width: 52px;
+            height: 52px;
+            border: 3px solid rgba(30, 41, 59, 0.24);
+            border-top-color: rgba(30, 41, 59, 0.9);
+            border-radius: 999px;
+            animation: loader-spin 1s linear infinite;
+        }
+
+        #message {
+            position: absolute;
+            inset: 0;
+            z-index: 6;
+            display: grid;
+            place-items: center;
+            padding: 2rem;
+            color: #7f1d1d;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        /* --- Top-left model selector --------------------------------------- */
+        .model-strip {
+            position: absolute;
+            z-index: 10;
+            top: 14px;
+            left: 14px;
+            display: flex;
+            gap: 8px;
+            padding: 6px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+        }
+
+        .model-btn {
+            appearance: none;
+            padding: 0;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.12s ease, border-color 0.12s ease;
+            outline: none;
+        }
+
+        .model-btn img {
+            display: block;
+            width: 72px;
+            height: 42px;
+            object-fit: cover;
+        }
+
+        .model-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .model-btn.active {
+            border-color: #1e3a8a;
+        }
+
+        /* --- Top-right reset button ---------------------------------------- */
+        #resetButton {
+            position: absolute;
+            z-index: 10;
+            top: 14px;
+            right: 14px;
+            appearance: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(15, 23, 42, 0.14);
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(8px);
+            color: #1f2937;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+        }
+
+        #resetButton:hover {
+            background: rgba(255, 255, 255, 0.94);
+        }
+
+        /* --- Bottom-left keyboard help ------------------------------------- */
+        .viewer-help {
+            position: absolute;
+            z-index: 8;
+            left: 14px;
+            bottom: 14px;
+            display: flex;
+            gap: 6px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(8px);
+            font-size: 0.72rem;
+            color: #1f2937;
+        }
+
+        .viewer-help span {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(15, 23, 42, 0.06);
+        }
+
+        .viewer-help strong {
+            font-weight: 800;
+            margin-right: 4px;
+        }
+
+        /* --- Bottom-center timeline ---------------------------------------- */
+        .timeline-panel {
+            position: absolute;
+            z-index: 8;
+            left: 50%;
+            bottom: 14px;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(8px);
+            color: #1f2937;
+            font-size: 0.75rem;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+        }
+
+        .timeline-panel button {
+            appearance: none;
+            border: 1px solid rgba(15, 23, 42, 0.16);
+            background: #fff;
+            color: inherit;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.04em;
+        }
+
+        .timeline-panel button:hover {
+            background: #f1f5f9;
+        }
+
+        .timeline-panel input[type="range"] {
+            width: min(260px, 40vw);
+            accent-color: #1e3a8a;
+        }
+
+        .timeline-panel .frame-info {
+            font-variant-numeric: tabular-nums;
+            min-width: 54px;
+            text-align: center;
+            color: #334155;
+        }
+
+        @keyframes loader-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .model-btn img {
+                width: 56px;
+                height: 34px;
+            }
+            .viewer-help {
+                display: none;
+            }
+            .timeline-panel input[type="range"] {
+                width: 40vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <div class="model-strip" id="modelStrip" role="tablist"></div>
+    <button id="resetButton" type="button">Reset view</button>
+
+    <div id="spinner"><div class="loader-core" aria-hidden="true"></div></div>
+    <div id="message"></div>
+
+    <div class="viewer-help">
+        <span><strong>W/A/S/D</strong> move</span>
+        <span><strong>I/J/K/L</strong> look</span>
+    </div>
+
+    <div class="timeline-panel" role="group" aria-label="Timeline">
+        <button id="playToggle" type="button">Pause</button>
+        <input id="frameSlider" type="range" min="0" max="59" value="0" step="1" />
+        <span class="frame-info"><span id="frameLabel">0</span> / <span id="frameTotal">59</span></span>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>

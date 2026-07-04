@@ -6,11 +6,35 @@
     <script src="./src/saved_resource"></script>
     <link href="./src/css2" rel="stylesheet">
     <link rel="stylesheet" href="./src/video-gallery.css">
+    <!-- Google Fonts matching the CHORD reference page -->
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Noto Sans', 'Inter', Arial, sans-serif;
             background-color: #f8fafc;
             color: #1e293b;
+            letter-spacing: 0;
+        }
+
+        .tracking-tight,
+        .tracking-wide,
+        .tracking-widest {
+            letter-spacing: 0 !important;
+        }
+
+        h1,
+        h2,
+        h3,
+        .research-nav {
+            font-family: 'Google Sans', 'Noto Sans', 'Inter', Arial, sans-serif;
+            letter-spacing: 0;
+        }
+
+        body section h2 {
+            font-size: clamp(1.75rem, 3.2vw, 3.1rem) !important;
+            line-height: 1.12 !important;
+            font-weight: 700 !important;
+            color: #111827;
         }
         .gradient-text {
             background: linear-gradient(135deg, #0ea5e9, #6366f1, #8b5cf6);
@@ -113,367 +137,979 @@
             opacity: 1;
         }
 
+        .project-title {
+            font-size: clamp(1.55rem, 5.3vw, 4.6rem);
+            font-weight: 700;
+        }
+
+        .project-title-line {
+            display: block;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 768px) {
+            .project-title {
+                font-size: clamp(3rem, 5.3vw, 4.8rem);
+            }
+        }
+
+        .interactive-scene-large .video-gallery-item,
+        .interactive-scene-large .image-video-pair,
+        .interactive-scene-large .video-container {
+            width: 100%;
+            max-width: none;
+        }
+
+        .interactive-scene-large .image-video-pair {
+            margin: 0;
+        }
+
+        .interactive-scene-large .video-container {
+            flex: 0 0 100%;
+        }
+
+        .scene-selector-shell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+            margin: 1.1rem auto 0;
+        }
+
+        .scene-selector-shell .video-gallery-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            margin: 0;
+            width: auto;
+            max-width: min(100%, 940px);
+            overflow-x: auto;
+            padding: 8px 6px 12px;
+            scroll-snap-type: x mandatory;
+        }
+
+        .scene-selector-shell .scene-button {
+            flex: 0 0 auto;
+            width: clamp(92px, 16vw, 160px);
+            max-width: none;
+            margin: 0;
+            scroll-snap-align: center;
+        }
+
+        .gallery-arrow {
+            flex: 0 0 auto;
+            width: 38px;
+            height: 52px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            font-size: 3rem;
+            line-height: 1;
+            font-weight: 500;
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+            transition: color 0.18s ease, transform 0.18s ease;
+        }
+
+        .gallery-arrow:hover {
+            color: #4f46e5;
+            transform: translateY(-1px);
+        }
+
+        .gallery-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-top: 0.55rem;
+        }
+
+        .gallery-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #c4c4c4;
+            border: 0;
+            padding: 0;
+            cursor: pointer;
+            transition: background-color 0.18s ease, transform 0.18s ease;
+        }
+
+        .gallery-dot.is-active {
+            background: #111827;
+            transform: scale(1.08);
+        }
+
+        .project-hero {
+            position: relative;
+            width: 100vw;
+            min-height: calc(100vh - 72px);
+            margin-left: calc(50% - 50vw);
+            margin-bottom: clamp(3.5rem, 7vw, 6rem);
+            padding: clamp(3.5rem, 8vh, 6rem) max(1rem, calc((100vw - 1120px) / 2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #ffffff;
+            isolation: isolate;
+        }
+
+        .project-hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background:
+                linear-gradient(180deg, rgba(3, 7, 18, 0.58), rgba(3, 7, 18, 0.34) 45%, rgba(248, 250, 252, 0.86) 100%),
+                linear-gradient(90deg, rgba(3, 7, 18, 0.52), rgba(3, 7, 18, 0.16), rgba(3, 7, 18, 0.52));
+        }
+
+        .hero-video-wall {
+            position: absolute;
+            inset: 0;
+            z-index: -2;
+            display: flex;
+            background: #020617;
+        }
+
+        .hero-bg-video {
+            width: 20%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+            filter: saturate(1.06) contrast(1.03);
+        }
+
+        .project-hero-content {
+            width: min(100%, 1120px);
+            text-shadow: 0 2px 18px rgba(0, 0, 0, 0.42);
+        }
+
+        .project-hero .gradient-text {
+            background: none;
+            -webkit-text-fill-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .project-hero .text-gray-800,
+        .project-hero .text-gray-500 {
+            color: rgba(255, 255, 255, 0.88) !important;
+        }
+
+        .project-hero .btn-hover {
+            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.22);
+        }
+
+        .full-bleed-section {
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+        }
+
+        .interactive-peek-section {
+            overflow: hidden;
+            padding: 0 0 clamp(3rem, 6vw, 5rem);
+        }
+
+        .interactive-peek-shell {
+            position: relative;
+            width: 100%;
+        }
+
+        .interactive-peek-track {
+            display: flex;
+            gap: clamp(1rem, 2.8vw, 2.75rem);
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            padding: 0 max(12vw, calc((100vw - 1120px) / 2)) 1.5rem;
+        }
+
+        .interactive-peek-card {
+            flex: 0 0 min(76vw, 1120px);
+            scroll-snap-align: center;
+            opacity: 0.58;
+            transform: scale(0.9);
+            transition: opacity 0.28s ease, transform 0.28s ease;
+        }
+
+        .interactive-peek-card.is-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .interactive-peek-card video,
+        .generated-world-gif {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 8px;
+            background: #020617;
+            object-fit: cover;
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.18);
+        }
+
+        .peek-arrow {
+            position: absolute;
+            top: 50%;
+            z-index: 5;
+            width: 52px;
+            height: 52px;
+            transform: translateY(-50%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 2.7rem;
+            line-height: 0.72;
+            overflow: hidden;
+            text-shadow: 0 3px 18px rgba(0, 0, 0, 0.55);
+            background: rgba(15, 23, 42, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 999px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            padding-bottom: 0.18em;
+        }
+
+        .peek-arrow[data-peek-prev] {
+            left: clamp(0.5rem, 3vw, 2.5rem);
+        }
+
+        .peek-arrow[data-peek-next] {
+            right: clamp(0.5rem, 3vw, 2.5rem);
+        }
+
+        .generated-worlds-section {
+            padding: clamp(3.5rem, 7vw, 6rem) 0 clamp(4rem, 8vw, 7rem);
+            background: #ffffff;
+        }
+
+        .generated-worlds-inner {
+            width: min(100%, 1500px);
+            margin: 0 auto;
+            padding: 0 clamp(1rem, 3vw, 2.5rem);
+        }
+
+        .generated-worlds-intro {
+            max-width: 980px;
+            margin: 0 auto clamp(2rem, 5vw, 4rem);
+            color: #4b5563;
+            font-size: clamp(1rem, 1.55vw, 1.25rem);
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .generated-world-stack {
+            display: grid;
+            gap: clamp(2.25rem, 6vw, 6rem);
+        }
+
+        .generated-world-card {
+            width: min(88vw, 760px);
+            margin: 0 auto;
+            transform: scale(var(--scroll-scale, 0.9));
+            opacity: var(--scroll-opacity, 0.78);
+            transform-origin: center center;
+            transition: transform 0.12s linear, opacity 0.12s linear;
+        }
+
+        /* --- Acknowledgements footer (matches CHORD reference) ----------- */
+        .ack-footer {
+            width: 100%;
+            background-color: #fafafa;
+            padding: 3rem 1.5rem 4rem;
+            border-top: 1px solid #efefef;
+            font-family: 'Noto Sans', 'Inter', Arial, sans-serif;
+        }
+
+        .ack-container {
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        .ack-title {
+            text-align: center;
+            font-family: 'Google Sans', 'Noto Sans', 'Inter', Arial, sans-serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #363636;
+            margin-bottom: 1.5rem;
+        }
+
+        .ack-content {
+            color: #4a4a4a;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .ack-content p {
+            margin-bottom: 1em;
+        }
+
+        .ack-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .ack-content a {
+            color: #485fc7;
+            text-decoration: none;
+            transition: color 0.12s ease;
+        }
+
+        .ack-content a:hover {
+            color: #3040a0;
+            text-decoration: underline;
+        }
+
+        .generated-world-caption {
+            margin: 0 0 clamp(0.9rem, 1.8vw, 1.45rem);
+            color: #111827;
+            font-family: 'Google Sans', 'Noto Sans', 'Inter', Arial, sans-serif;
+            /* Slightly smaller ceiling so each caption fits on a single line at
+               the current card widths. */
+            font-size: clamp(1rem, 1.6vw, 1.4rem) !important;
+            font-weight: 600;
+            line-height: 1.2;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .generated-world-media {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #e9f5f6;
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.18);
+        }
+
+        .generated-world-gif {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            filter: contrast(1.04) saturate(1.05);
+            transition: opacity 0.42s ease;
+            box-shadow: none;
+        }
+
+        .generated-world-media.is-loaded .generated-world-gif {
+            opacity: 1;
+        }
+
+        .gif-loader {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(circle at 50% 42%, rgba(14, 165, 233, 0.18), transparent 32%),
+                linear-gradient(135deg, #ecfeff, #f8fafc 55%, #e0f2fe);
+            transition: opacity 0.28s ease, visibility 0.28s ease;
+            z-index: 2;
+        }
+
+        .generated-world-media.is-loaded .gif-loader {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .object-motion-media {
+            width: min(88vw, 760px);
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #020617;
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.18);
+        }
+
+        .object-motion-media video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            border-radius: 0;
+        }
+
+        .liquid-loader {
+            position: relative;
+            width: 104px;
+            height: 76px;
+        }
+
+        .liquid-loader::before,
+        .liquid-loader::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 82px;
+            height: 82px;
+            border: 2px solid rgba(6, 182, 212, 0.32);
+            border-radius: 42% 58% 57% 43% / 45% 42% 58% 55%;
+            transform: translate(-50%, -50%);
+            animation: loader-ripple 1.9s ease-in-out infinite;
+        }
+
+        .liquid-loader::after {
+            width: 54px;
+            height: 54px;
+            border-color: rgba(59, 130, 246, 0.28);
+            animation-delay: -0.65s;
+            animation-duration: 1.55s;
+        }
+
+        .liquid-drop {
+            position: absolute;
+            bottom: 12px;
+            width: 16px;
+            height: 22px;
+            border-radius: 12px 12px 14px 14px;
+            background: linear-gradient(180deg, #38bdf8, #14b8a6);
+            box-shadow: 0 10px 22px rgba(20, 184, 166, 0.34);
+            animation: loader-wave 0.9s ease-in-out infinite;
+        }
+
+        .liquid-drop:nth-child(1) {
+            left: 24px;
+        }
+
+        .liquid-drop:nth-child(2) {
+            left: 44px;
+            animation-delay: 0.14s;
+        }
+
+        .liquid-drop:nth-child(3) {
+            left: 64px;
+            animation-delay: 0.28s;
+        }
+
+        .loader-label {
+            position: absolute;
+            left: 50%;
+            top: calc(50% + 54px);
+            transform: translateX(-50%);
+            color: #0f766e;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        @keyframes loader-wave {
+            0%, 100% {
+                transform: translateY(0) scaleY(0.92);
+                opacity: 0.72;
+            }
+            50% {
+                transform: translateY(-24px) scaleY(1.08);
+                opacity: 1;
+            }
+        }
+
+        @keyframes loader-ripple {
+            0%, 100% {
+                transform: translate(-50%, -50%) rotate(0deg) scale(0.94);
+            }
+            50% {
+                transform: translate(-50%, -50%) rotate(18deg) scale(1.08);
+            }
+        }
+
+        .explore-world-section {
+            /* Break out of the parent max-w-5xl container and center against
+               the viewport, matching the full-bleed sections above. */
+            width: 100vw;
+            max-width: none;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            margin-bottom: 5rem;
+            padding: 0;
+        }
+
+        .explore-world-section > * {
+            width: min(96vw, 1480px);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .explore-world-section p {
+            max-width: 860px;
+            margin: 0 auto;
+            color: #4b5563;
+            font-size: clamp(0.98rem, 1.25vw, 1.12rem);
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .splat-viewer-shell {
+            position: relative;
+            height: min(78vh, 820px);
+            min-height: 600px;
+            margin-top: 2rem;
+            overflow: hidden;
+            border: 1px solid rgba(17, 24, 39, 0.12);
+            border-radius: 8px;
+            background: #030712;
+            box-shadow: 0 28px 78px rgba(15, 23, 42, 0.2);
+        }
+
+        .splat-viewer-shell::before {
+            display: none;
+        }
+
+        .splat-viewer-frame {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #030712;
+        }
+
+        .splat-control-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .splat-control-grid span {
+            display: block;
+            border: 1px solid rgba(17, 24, 39, 0.1);
+            border-radius: 8px;
+            background: #ffffff;
+            padding: 0.75rem 0.9rem;
+            color: #374151;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            text-align: center;
+        }
+
+        .splat-control-grid strong {
+            color: #111827;
+            font-weight: 800;
+        }
+
+        @media (max-width: 640px) {
+            .scene-selector-shell {
+                gap: 6px;
+            }
+
+            .gallery-arrow {
+                width: 24px;
+                font-size: 2.3rem;
+            }
+
+            .scene-selector-shell .video-gallery-buttons {
+                gap: 10px;
+            }
+
+            .project-hero {
+                min-height: calc(100vh - 64px);
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+
+            .splat-viewer-shell::before {
+                display: none;
+            }
+
+            .splat-viewer-shell {
+                min-height: 420px;
+                height: 58vh;
+            }
+
+            .splat-control-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .interactive-peek-track {
+                padding: 0 8vw 1.25rem;
+            }
+
+            .interactive-peek-card {
+                flex-basis: 84vw;
+            }
+
+            .peek-arrow {
+                width: 42px;
+                height: 42px;
+                font-size: 2.2rem;
+            }
+        }
+
+
+        .research-nav {
+            width: 100%;
+            background: #ffffff;
+            border-bottom: 1px solid #d9d9d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+        .research-nav-inner {
+            width: min(100%, 1120px);
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            align-items: stretch;
+        }
+
+        .research-link {
+            min-height: 72px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 0 18px;
+            color: #4b5563;
+            font-size: clamp(0.9rem, 1.65vw, 1.14rem);
+            font-weight: 500;
+            line-height: 1.2;
+            text-align: center;
+            border-bottom: 3px solid transparent;
+            transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+        }
+
+        .research-link-title,
+        .research-link-venue {
+            display: block;
+        }
+
+        .research-link-venue {
+            font-size: clamp(0.68rem, 1vw, 0.78rem);
+            font-weight: 600;
+            line-height: 1;
+            color: #8a94a6;
+        }
+
+        .research-link:hover {
+            background: #f7fbff;
+            color: #2f80ed;
+        }
+
+        .research-link:hover .research-link-venue,
+        .research-link.is-active .research-link-venue {
+            color: #2f80ed;
+        }
+
+        .research-link.is-active {
+            color: #2f80ed;
+            border-bottom-color: #2f80ed;
+            background: #f8fbff;
+        }
+
+        @media (max-width: 640px) {
+            .research-link {
+                min-height: 64px;
+                padding: 0 8px;
+                font-size: 0.78rem;
+            }
+
+            .research-link-venue {
+                font-size: 0.66rem;
+            }
+        }
+
     </style>
 <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.right-4{right:1rem}.top-0{top:0px}.top-4{top:1rem}.top-full{top:100%}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-6{margin-top:1.5rem;margin-bottom:1.5rem}.mb-1{margin-bottom:0.25rem}.mb-12{margin-bottom:3rem}.mb-16{margin-bottom:4rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mt-2{margin-top:0.5rem}.mt-8{margin-top:2rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-2{height:0.5rem}.h-6{height:1.5rem}.h-auto{height:auto}.w-2{width:0.5rem}.w-48{width:12rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-\[92\%\]{width:92%}.w-full{width:100%}.max-w-4xl{max-width:56rem}.max-w-5xl{max-width:64rem}.max-w-full{max-width:100%}.shrink-0{flex-shrink:0}.cursor-grab{cursor:grab}.snap-x{scroll-snap-type:x var(--tw-scroll-snap-strictness)}.snap-mandatory{--tw-scroll-snap-strictness:mandatory}.snap-center{scroll-snap-align:center}.scroll-mt-24{scroll-margin-top:6rem}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.gap-x-4{column-gap:1rem}.gap-y-2{row-gap:0.5rem}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.scroll-smooth{scroll-behavior:smooth}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-indigo-50{--tw-border-opacity:1;border-color:rgb(238 242 255 / var(--tw-border-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-indigo-50{--tw-gradient-from:#eef2ff var(--tw-gradient-from-position);--tw-gradient-to:rgb(238 242 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-purple-50{--tw-gradient-to:#faf5ff var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.object-cover{object-fit:cover}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-16{padding-bottom:4rem}.pb-2{padding-bottom:0.5rem}.pb-4{padding-bottom:1rem}.pt-24{padding-top:6rem}.text-center{text-align:center}.text-right{text-align:right}.text-justify{text-align:justify}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-0.025em}.tracking-wide{letter-spacing:0.025em}.tracking-widest{letter-spacing:0.1em}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-indigo-500{--tw-text-opacity:1;color:rgb(99 102 241 / var(--tw-text-opacity, 1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-100{opacity:1}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.hover\:bg-gray-600:hover{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.hover\:bg-indigo-400:hover{--tw-bg-opacity:1;background-color:rgb(129 140 248 / var(--tw-bg-opacity, 1))}.hover\:text-indigo-600:hover{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.hover\:text-indigo-800:hover{--tw-text-opacity:1;color:rgb(55 48 163 / var(--tw-text-opacity, 1))}.focus\:opacity-100:focus{opacity:1}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}@media (min-width: 768px){.md\:static{position:static}.md\:mb-10{margin-bottom:2.5rem}.md\:mb-12{margin-bottom:3rem}.md\:mb-16{margin-bottom:4rem}.md\:mb-2{margin-bottom:0.5rem}.md\:mb-24{margin-bottom:6rem}.md\:mb-4{margin-bottom:1rem}.md\:mb-5{margin-bottom:1.25rem}.md\:mb-6{margin-bottom:1.5rem}.md\:mb-8{margin-bottom:2rem}.md\:mt-0{margin-top:0px}.md\:mt-10{margin-top:2.5rem}.md\:mt-4{margin-top:1rem}.md\:block{display:block}.md\:flex{display:flex}.md\:hidden{display:none}.md\:h-2\.5{height:0.625rem}.md\:w-1\/2{width:50%}.md\:w-2\.5{width:0.625rem}.md\:w-6{width:1.5rem}.md\:w-\[70\%\]{width:70%}.md\:w-auto{width:auto}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:gap-10{gap:2.5rem}.md\:gap-12{gap:3rem}.md\:gap-2{gap:0.5rem}.md\:gap-5{gap:1.25rem}.md\:gap-6{gap:1.5rem}.md\:gap-x-6{column-gap:1.5rem}.md\:rounded-2xl{border-radius:1rem}.md\:rounded-3xl{border-radius:1.5rem}.md\:rounded-xl{border-radius:0.75rem}.md\:border-none{border-style:none}.md\:bg-transparent{background-color:transparent}.md\:p-0{padding:0px}.md\:p-10{padding:2.5rem}.md\:p-4{padding:1rem}.md\:p-5{padding:1.25rem}.md\:p-6{padding:1.5rem}.md\:p-8{padding:2rem}.md\:px-10{padding-left:2.5rem;padding-right:2.5rem}.md\:px-4{padding-left:1rem;padding-right:1rem}.md\:px-6{padding-left:1.5rem;padding-right:1.5rem}.md\:px-8{padding-left:2rem;padding-right:2rem}.md\:py-3{padding-top:0.75rem;padding-bottom:0.75rem}.md\:py-4{padding-top:1rem;padding-bottom:1rem}.md\:py-8{padding-top:2rem;padding-bottom:2rem}.md\:pb-24{padding-bottom:6rem}.md\:pt-32{padding-top:8rem}.md\:text-left{text-align:left}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\:text-6xl{font-size:3.75rem;line-height:1}.md\:text-base{font-size:1rem;line-height:1.5rem}.md\:text-lg{font-size:1.125rem;line-height:1.75rem}.md\:text-sm{font-size:0.875rem;line-height:1.25rem}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}.md\:opacity-0{opacity:0}.md\:shadow-none{--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.group:hover .md\:group-hover\:opacity-100{opacity:1}}@media (min-width: 1024px){.lg\:w-\[60\%\]{width:60%}}</style></head>
 <body class="antialiased leading-relaxed tracking-wide relative">
 
-    <nav class="fixed top-0 w-full z-50 glass-card px-4 md:px-6 py-3 md:py-4 flex justify-between items-center transition-all duration-300 relative">
-        <div class="font-bold text-base md:text-lg tracking-tight text-gray-800">LivingWorld</div>
-
-        <button onclick="toggleMobileMenu()" class="md:hidden text-gray-600 hover:text-indigo-600 focus:outline-none transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
+    <nav class="research-nav" aria-label="Project navigation">
+        <div class="research-nav-inner">
+            <a class="research-link is-active" href="./index.html" aria-current="page">LivingWorld</a>
+            <a class="research-link" href="https://paper.pnu-cvsp.com/ICLR2025_3D-MOM/">
+                <span class="research-link-title">4DGS-Cinemagraphy</span>
+                <span class="research-link-venue">ICLR2025</span>
+            </a>
+            <a class="research-link" href="https://paper.pnu-cvsp.com/MoE-GS/">
+                <span class="research-link-title">MoE-GS</span>
+                <span class="research-link-venue">ICLR2026</span>
+            </a>
+        </div>
     </nav>
 
-    <div class="container mx-auto max-w-5xl px-4 md:px-6 pt-24 md:pt-32 pb-16 md:pb-24">
+    <div class="container mx-auto max-w-5xl px-4 md:px-6 pb-16 md:pb-24">
 
-        <header class="text-center mb-12 md:mb-16">
-            <h1 class="text-3xl md:text-6xl font-extrabold mb-6 md:mb-8 tracking-tight gradient-text py-2 leading-tight">
-                LivingWorld: Interactive 4D World Generation with Environmental Dynamics
-            </h1>
-
-            <div class="text-base md:text-xl flex flex-wrap justify-center gap-x-4 md:gap-x-6 gap-y-2 mb-2 font-medium text-gray-800">
-    
-                <span>
-                    <a href="https://www.pnu-cvsp.com/members/hyeong-ju" class="custom-link" style="color: rgb(78, 173, 211);">
-                        Hyeongju Mun
-                    </a><sup>1*</sup>
-                </span>
-
-                <span>
-                    <a href="https://www.pnu-cvsp.com/members/inhwan" class="custom-link" style="color: rgb(78, 173, 211);">
-                        In-Hwan Jin
-                    </a><sup>1*</sup>
-                </span>
-
-                <span>
-                    <a href="https://www.pnu-cvsp.com/members/sohyeong" class="custom-link" style="color: rgb(78, 173, 211);">
-                        Sohyeong Kim
-                    </a><sup>1</sup>
-                </span>
-
-                <span>
-                    <a href="https://www.pnu-cvsp.com/prof" class="custom-link" style="color: rgb(78, 173, 211);">
-                        Kyeongbo Kong
-                    </a><sup>1†</sup>
-                </span>
-
+        <header class="project-hero text-center">
+            <div class="hero-video-wall" aria-hidden="true">
+                <video class="hero-bg-video" autoplay muted loop playsinline preload="metadata">
+                    <source src="./src/videos/patagonia.mp4" type="video/mp4">
+                </video>
+                <video class="hero-bg-video" autoplay muted loop playsinline preload="metadata">
+                    <source src="./src/videos/waterfall_clean.mp4" type="video/mp4">
+                </video>
+                <video class="hero-bg-video" autoplay muted loop playsinline preload="metadata">
+                    <source src="./src/videos/alpine.mp4" type="video/mp4">
+                </video>
+                <video class="hero-bg-video" autoplay muted loop playsinline preload="metadata">
+                    <source src="./src/videos/cloud.mp4" type="video/mp4">
+                </video>
+                <video class="hero-bg-video" autoplay muted loop playsinline preload="metadata">
+                    <source src="./src/videos/smoke_fire.mp4" type="video/mp4">
+                </video>
             </div>
-            <p class="text-base md:text-lg text-gray-500 mb-8 md:mb-10">
-                <sup>1</sup>Pusan National University<br>
-                <span class="text-sm md:text-base italic"><sup>*</sup>Equal Contribution     <sup>†</sup>Corresponding Author</span> 
-            </p>
 
-            <div class="flex flex-wrap justify-center gap-3 md:gap-5">
-                <a href="https://arxiv.org/pdf/2604.01641" class="btn-hover flex items-center justify-center gap-2 bg-gray-900 text-white px-6 md:px-8 py-3 rounded-full font-semibold text-sm shadow-lg w-full md:w-auto">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"></path>
-                        <path d="M4.5 3.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zM4.5 6.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zM4.5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"></path>
-                    </svg>
-                    Paper
-                </a>
+            <div class="project-hero-content">
+                <h1 class="project-title font-extrabold mb-6 md:mb-8 tracking-tight gradient-text py-2 leading-tight">
+                    <span class="project-title-line">LivingWorld: Interactive 4D World Generation</span>
+                    <span class="project-title-line">with Environmental Dynamics</span>
+                </h1>
+
+                <div class="text-base md:text-xl flex flex-wrap justify-center gap-x-4 md:gap-x-6 gap-y-2 mb-2 font-medium text-gray-800">
+        
+                    <span>
+                        <a href="https://www.pnu-cvsp.com/members/hyeong-ju" class="custom-link" style="color: rgb(78, 173, 211);">
+                            Hyeongju Mun
+                        </a><sup>*</sup>
+                    </span>
+
+                    <span>
+                        <a href="https://www.pnu-cvsp.com/members/inhwan" class="custom-link" style="color: rgb(78, 173, 211);">
+                            In-Hwan Jin
+                        </a><sup>*</sup>
+                    </span>
+
+                    <span>
+                        <a href="https://www.pnu-cvsp.com/members/sohyeong" class="custom-link" style="color: rgb(78, 173, 211);">
+                            Sohyeong Kim
+                        </a>
+                    </span>
+
+                    <span>
+                        <a href="https://www.pnu-cvsp.com/prof" class="custom-link" style="color: rgb(78, 173, 211);">
+                            Kyeongbo Kong
+                        </a><sup>†</sup>
+                    </span>
+
+                </div>
+                <p class="text-base md:text-lg text-gray-500 mb-8 md:mb-10">
+                    Pusan National University<br>
+                    <span class="text-sm md:text-base italic"><sup>*</sup>Equal Contribution     <sup>†</sup>Corresponding Author</span><br>
+                    <span class="block mt-8 text-xl md:text-2xl font-extrabold" style="color: #64a1cf;">ECCV 2026 in Malmö, Sweden</span>
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-3 md:gap-5">
+                    <a href="https://arxiv.org/pdf/2604.01641" class="btn-hover flex items-center justify-center gap-2 bg-gray-900 text-white px-6 md:px-8 py-3 rounded-full font-semibold text-sm shadow-lg w-full md:w-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"></path>
+                            <path d="M4.5 3.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zM4.5 6.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zM4.5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"></path>
+                        </svg>
+                        Paper
+                    </a>
+                </div>
             </div>
         </header>
 
-        <section id="world-interactive" class="mb-8 md:mb-12">
-            <div class="w-full bg-white rounded-2xl md:rounded-3xl mb-4 md:mb-6 shadow-lg border border-gray-100 p-3 md:p-5">
-                <div class="video-gallery-buttons mb-3" id="world-scene-buttons">
-                    <!-- <button class="scene-button world-scene-button is-primary" type="button"
-                        data-scene-name="Sweden"
-                        data-world-img="./src/img/sweden_world.png"
-                        data-world-zoom-in="./src/videos/teaser/zoom_in_sweden.mp4"
-                        data-world-main="./src/videos/teaser/sweden.mp4"
-                        data-world-zoom-out="./src/videos/teaser/zoom_out_sweden.mp4">
-                        <img src="./src/img/sweden.png" alt="Sweden scene teaser">
-                    </button> -->
-                    <!-- <button class="scene-button world-scene-button" type="button"
-                        data-scene-name="Alpine"
-                        data-world-img="./src/img/alpine_world.png"
-                        data-world-zoom-in="./src/videos/teaser/zoom_in_alpine.mp4"
-                        data-world-main="./src/videos/teaser/alpine.mp4"
-                        data-world-zoom-out="./src/videos/teaser/zoom_out_alpine.mp4">
-                        <img src="./src/img/alpine.png" alt="Alpine scene teaser">
-                    </button>
-                    <button class="scene-button world-scene-button" type="button"
-                        data-scene-name="Cloud"
-                        data-world-img="./src/img/cloud_world.png"
-                        data-world-zoom-in="./src/videos/teaser/zoom_in_cloud.mp4"
-                        data-world-main="./src/videos/teaser/cloud.mp4"
-                        data-world-zoom-out="./src/videos/teaser/zoom_out_cloud.mp4">
-                        <img src="./src/img/cloud11.png" alt="Cloud scene teaser">
-                    </button>
-                    <button class="scene-button world-scene-button" type="button"
-                        data-scene-name="Smoke Fire"
-                        data-world-img="./src/img/smoke_fire_world.png"
-                        data-world-zoom-in="./src/videos/teaser/zoom_in_smoke_fire.mp4"
-                        data-world-main="./src/videos/teaser/smoke_fire.mp4"
-                        data-world-zoom-out="./src/videos/teaser/zoom_out_smoke_fire.mp4">
-                        <img src="./src/img/smoke_fire8.png" alt="Smoke fire scene teaser">
-                    </button> -->
-                </div>
-                <div id="world-teaser-stage" class="world-teaser-stage overflow-hidden rounded-xl" style="border:1px solid #e2e8f0;">
-                    <div id="world-main-view" class="world-main-view">
-                        <img id="world-img" src="./src/img/sweden_world.png" alt="World overview" class="block">
+        <section id="interactive-scene-generation" class="full-bleed-section interactive-peek-section">
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Interactive Dynamic Scene Generation</h2>
 
-                        <button id="world-play-btn" class="region-btn absolute" style="top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(255,255,255,0.5); border:1px solid rgba(209,213,219,0.7); color:#111; padding:6px 10px; border-radius:999px; font-family: 'Inter', sans-serif; font-weight: 600; z-index:1;">Click</button>
+            <div class="interactive-peek-shell">
+                <button class="peek-arrow" type="button" data-peek-prev aria-label="Previous scene">&lsaquo;</button>
+                <div class="interactive-peek-track hide-scrollbar" id="interactive-peek-track">
+                    <div class="interactive-peek-card">
+                        <video preload="metadata" controls muted loop autoplay playsinline>
+                            <source src="./src/videos/Demo_smoke43_cropped.mp4" type="video/mp4">
+                        </video>
                     </div>
-
-                    <div id="world-video-view" class="world-video-view">
-                        <button id="world-back-btn" class="absolute" style="font-family: 'Inter', sans-serif; z-index:30; display:none; top:12px; right:12px; padding:4px 12px; background:white; color:#111; border-radius:999px; font-size:0.75rem; font-weight:600; box-shadow:0 1px 4px rgba(0,0,0,0.15); border:none; cursor:pointer;">Back</button>
-
-                        <video id="world-zoom-in-video" class="world-video-layer" playsinline muted preload="auto">
-                            <source src="./src/videos/teaser/zoom_in_sweden.mp4" type="video/mp4">
+                    <div class="interactive-peek-card">
+                        <video preload="metadata" controls muted loop autoplay playsinline>
+                            <source src="./src/videos/Demo_smoke_fire10_cropped.mp4" type="video/mp4">
                         </video>
-                        <video id="world-main-video" class="world-video-layer" playsinline muted preload="auto" loop>
-                            <source src="./src/videos/teaser/sweden.mp4" type="video/mp4">
+                    </div>
+                    <div class="interactive-peek-card">
+                        <video preload="metadata" controls muted loop autoplay playsinline>
+                            <source src="./src/videos/Demo_waterfall32_cropped.mp4" type="video/mp4">
                         </video>
-                        <video id="world-zoom-out-video" class="world-video-layer" playsinline muted preload="auto">
-                            <source src="./src/videos/teaser/zoom_out_sweden.mp4" type="video/mp4">
+                    </div>
+                    <div class="interactive-peek-card is-active">
+                        <video preload="metadata" controls muted loop autoplay playsinline>
+                            <source src="./src/videos/Demo_Emerald_cropped.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="interactive-peek-card">
+                        <video preload="metadata" controls muted loop autoplay playsinline>
+                            <source src="./src/videos/Demo_interlaken2_cropped.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="interactive-peek-card">
+                        <video preload="metadata" controls muted loop autoplay playsinline>
+                            <source src="./src/videos/Demo_fog32_cropped.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="interactive-peek-card">
+                        <video preload="metadata" controls muted loop autoplay playsinline>
+                            <source src="./src/videos/Demo_fog58_cropped.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="interactive-peek-card">
+                        <video preload="metadata" controls muted loop autoplay playsinline>
+                            <source src="./src/videos/Demo_Stockholm2_cropped.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
+                <button class="peek-arrow" type="button" data-peek-next aria-label="Next scene">&rsaquo;</button>
             </div>
-
-            <p class="text-gray-700 text-sm md:text-base px-2 md:px-4 max-w-4xl mx-auto text-justify leading-relaxed">
-                <strong>Overview of LivingWorld.</strong> LivingWorld generates dynamic 4D scenes from a single image by progressively expanding the scene while maintaining globally coherent environmental dynamics. 
-                We demonstrate results with scene-scale motions such as water, clouds, and smoke, rendered under moving viewpoints. 
-                Our method preserves spatial and temporal consistency across views, enabling interactive and physically plausible 4D world generation.
-            </p>
+            <div class="gallery-dots" data-peek-dots aria-label="Interactive dynamic scene pagination"></div>
         </section>
 
-        
-
-        <section id="abstract" class="mb-16 md:mb-24 scroll-mt-24">
-            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl md:rounded-3xl px-6 py-6 md:px-10 md:py-8 shadow-sm border border-indigo-50">
-                <h2 class="text-2xl md:text-3xl font-extrabold mb-3 md:mb-5 text-center text-gray-900">Abstract</h2>
-                <p id="abstract-text" class="text-gray-700 text-sm md:text-base leading-relaxed text-justify mobile-clamp transition-all duration-300">
-                    We introduce LivingWorld, an interactive framework for generating 4D worlds with environmental dynamics from a single image. While recent advances in 3D scene generation enable large-scale environment creation, most approaches focus primarily on reconstructing static geometry, leaving scene-scale environmental dynamics such as clouds, water, or smoke largely unexplored.
-                    Modeling such dynamics is challenging because motion must remain coherent across an expanding scene while supporting low-latency user feedback.
-                    LivingWorld addresses this challenge by progressively constructing a globally coherent motion field as the scene expands.
-                    To maintain global consistency during expansion, we introduce a geometry-aware alignment module that resolves directional and scale ambiguities across views. We further represent motion using a compact hash-based motion field, enabling efficient querying and stable propagation of dynamics throughout the scene.
-                    This representation also supports bidirectional motion propagation during rendering, producing long and temporally coherent 4D sequences without relying on expensive video-based refinement. On a single RTX 5090 GPU, generating each new scene expansion step requires 9 seconds, followed by 3 seconds for motion alignment and motion field updates, enabling interactive 4D world generation with globally coherent environmental dynamics. Additional dynamic results are provided in the supplementary video.
-                <div class="text-center mt-2">
-                    <button id="read-more-btn" class="text-indigo-600 font-semibold text-sm md:hidden hover:text-indigo-800" onclick="toggleAbstract()">Read More</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="method" class="mb-16 md:mb-24 scroll-mt-24">
-
-                <!-- Title -->
-            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">
-                Method
-            </h2>
-
-            <!-- ================= Overview ================= -->
-            <div class="glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8 md:mb-12">
-
-                <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 text-center">
-                    Interactive 4D World Generation
-                </h3>
-
-                <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
-                    LivingWorld constructs a globally consistent motion field during scene expansion.
-                    Starting from a single image, we progressively expand the scene and estimate motion from user interactions.
-                    To ensure consistency across views, we introduce a geometry-aware alignment module that resolves directional and scale ambiguities.
-                    We further represent motion using a compact hash-based field, enabling efficient and stable propagation of dynamics.
-                    This allows temporally coherent and view-consistent 4D world generation.
+        <section class="full-bleed-section generated-worlds-section" id="results-section">
+            <div class="generated-worlds-inner">
+                <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Rendering Generated Worlds</h2>
+                <p class="generated-worlds-intro">
+                    LivingWorld generates dynamic 3D worlds from a single image and user-specified motion.
+                    Here, we present rendered results with moving cameras and environmental dynamics.
                 </p>
-                <br>
-
-                <img src="./src/img/overallframe.png"
-                    alt="LivingWorld Pipeline"
-                    class="w-full h-auto object-contain rounded-xl">
-
-            </div>
-
-
-            <!-- ================= Alignment Module ================= -->
-            <div class="glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8 md:mb-12">
-
-                <div class="flex flex-col md:flex-row items-center gap-6">
-
-                    <!-- Image -->
-                    <div class="w-full md:w-1/2">
-                        <img src="./src/img/align.png"
-                            alt="Geometry-aware Alignment"
-                            class="w-full h-auto object-contain rounded-xl">
-                    </div>
-
-                    <!-- Text -->
-                    <div class="w-full md:w-1/2">
-
-                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3">
-                            Geometry-Aware Alignment
-                        </h3>
-
-                        <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
-                            Our alignment module resolves directional and scale ambiguities across views.
-                            By matching overlapping regions between newly expanded and existing scenes,
-                            we enforce globally consistent motion during scene growth.
-                            This enables stable integration of motion across the entire scene.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- ================= Motion Field ================= -->
-            <div class="glass-card p-6 md:p-10 rounded-2xl md:rounded-3xl">
-
-                <div class="flex flex-col md:flex-row items-center gap-6">
-
-                    <!-- Image -->
-                    <div class="w-full md:w-1/2">
-                        <img src="./src/img/motion_field.png"
-                            alt="Hash-based Motion Field"
-                            class="w-full h-auto object-contain rounded-xl">
-                    </div>
-
-                    <!-- Text -->
-                    <div class="w-full md:w-1/2">
-
-                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3">
-                            Hash-based Motion Field
-                        </h3>
-
-                        <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
-                            We represent motion as a continuous hash-based field,
-                            enabling efficient querying and stable propagation of dynamics.
-                            The field supports bidirectional motion integration,
-                            producing long and temporally coherent 4D sequences during rendering.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <section class="hero is-small" id="results-section">
-            <div class="hero-body">
-                <div class="container">
-                    <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Results</h2>
-                    
-                    <figure class="image">
-                        <figcaption>
-                            WonderPlay generates dynamic 3D scenes from a single image and input actions. 
-                            It predicts the physical consequences of the input actions.
-                            Here, we present video results rendered with a moving camera, overlaid with action visualizations. 
+                <div class="generated-world-stack">
+                    <figure class="generated-world-card scroll-grow-card">
+                        <figcaption class="generated-world-caption">
+                            &ldquo;A glacial river winds through a mountain valley.&rdquo;
                         </figcaption>
+                        <div class="generated-world-media is-loading">
+                            <div class="gif-loader" aria-hidden="true">
+                                <div class="liquid-loader">
+                                    <span class="liquid-drop"></span>
+                                    <span class="liquid-drop"></span>
+                                    <span class="liquid-drop"></span>
+                                    <span class="loader-label">Loading world</span>
+                                </div>
+                            </div>
+                            <video class="generated-world-gif" autoplay muted loop playsinline preload="metadata" aria-label="Animated rendering of a glacial river in a mountain valley">
+                                <source src="./src/videos/patagonia.mp4" type="video/mp4">
+                            </video>
+                        </div>
                     </figure>
-
-                    
-
-                    <!-- Scene buttons -->
-                    <div class="video-gallery-buttons" id="gallery-buttons-results">
-                        <button class="scene-button is-primary" data-video-index="0">
-                            <img src="./src/img/patagonia.png" alt="Scene 1">
-                        </button>
-                        <button class="scene-button" data-video-index="1">
-                            <img src="./src/img/waterfall12.png" alt="Scene 2">
-                        </button>
-                        <button class="scene-button" data-video-index="2">
-                            <img src="./src/img/alpine.png" alt="Scene 3">
-                        </button>
-                        <button class="scene-button" data-video-index="3">
-                            <img src="./src/img/cloud11.png" alt="Scene 4">
-                        </button>
-                        <button class="scene-button" data-video-index="4">
-                            <img src="./src/img/smoke_fire10.png" alt="Scene 5">
-                        </button>
-                    </div>
-
-                    <!-- Video gallery carousel -->
-                    <div class="video-gallery-carousel" id="gallery-carousel-results">
-
-                        <div class="video-gallery-item">
-                            <div class="image-video-pair" style="justify-content: center;">
-                                
-                                <div class="video-container">
-                                    <video preload="none" controls="" muted="" loop="" autoplay="">
-                                        <source data-src="./src/videos/patagonia.mp4" type="video/mp4">
-                                    </video>
+                    <figure class="generated-world-card scroll-grow-card">
+                        <figcaption class="generated-world-caption">
+                            &ldquo;A broad waterfall churns mist into the river below.&rdquo;
+                        </figcaption>
+                        <div class="generated-world-media is-loading">
+                            <div class="gif-loader" aria-hidden="true">
+                                <div class="liquid-loader">
+                                    <span class="liquid-drop"></span>
+                                    <span class="liquid-drop"></span>
+                                    <span class="liquid-drop"></span>
+                                    <span class="loader-label">Loading world</span>
                                 </div>
                             </div>
+                            <video class="generated-world-gif" autoplay muted loop playsinline preload="metadata" aria-label="Animated rendering of a broad waterfall and mist">
+                                <source src="./src/videos/waterfall_clean.mp4" type="video/mp4">
+                            </video>
                         </div>
-
-                        <div class="video-gallery-item">
-                            <div class="image-video-pair" style="justify-content: center;">
-                                
-                                <div class="video-container">
-                                    <video preload="none" controls="" muted="" loop="" autoplay="">
-                                        <source data-src="./src/videos/waterfall.mp4" type="video/mp4">
-                                    </video>
+                    </figure>
+                    <figure class="generated-world-card scroll-grow-card">
+                        <figcaption class="generated-world-caption">
+                            &ldquo;A fast alpine river winds through a pine forest beneath sharp peaks.&rdquo;
+                        </figcaption>
+                        <div class="generated-world-media is-loading">
+                            <div class="gif-loader" aria-hidden="true">
+                                <div class="liquid-loader">
+                                    <span class="liquid-drop"></span>
+                                    <span class="liquid-drop"></span>
+                                    <span class="liquid-drop"></span>
+                                    <span class="loader-label">Loading world</span>
                                 </div>
                             </div>
+                            <video class="generated-world-gif" autoplay muted loop playsinline preload="metadata" aria-label="Animated rendering of an alpine river through a pine forest">
+                                <source src="./src/videos/alpine.mp4" type="video/mp4">
+                            </video>
                         </div>
-
-                        <div class="video-gallery-item">
-                            <div class="image-video-pair" style="justify-content: center;">
-                                
-                                <div class="video-container">
-                                    <video preload="none" controls="" muted="" loop="" autoplay="">
-                                        <source data-src="./src/videos/alpine.mp4" type="video/mp4">
-                                    </video>
+                    </figure>
+                    <figure class="generated-world-card scroll-grow-card">
+                        <figcaption class="generated-world-caption">
+                            &ldquo;Low clouds drift across sunlit hills and valley roads.&rdquo;
+                        </figcaption>
+                        <div class="generated-world-media is-loading">
+                            <div class="gif-loader" aria-hidden="true">
+                                <div class="liquid-loader">
+                                    <span class="liquid-drop"></span>
+                                    <span class="liquid-drop"></span>
+                                    <span class="liquid-drop"></span>
+                                    <span class="loader-label">Loading world</span>
                                 </div>
                             </div>
+                            <video class="generated-world-gif" autoplay muted loop playsinline preload="metadata" aria-label="Animated rendering of low clouds over sunlit hills">
+                                <source src="./src/videos/cloud.mp4" type="video/mp4">
+                            </video>
                         </div>
-
-                        <div class="video-gallery-item">
-                            <div class="image-video-pair" style="justify-content: center;">
-                                
-                                <div class="video-container">
-                                    <video preload="none" controls="" muted="" loop="" autoplay="">
-                                        <source data-src="./src/videos/cloud.mp4" type="video/mp4">
-                                    </video>
+                    </figure>
+                    <figure class="generated-world-card scroll-grow-card">
+                        <figcaption class="generated-world-caption">
+                            &ldquo;Wildfire flames and heavy smoke roll across a mountain slope.&rdquo;
+                        </figcaption>
+                        <div class="generated-world-media is-loading">
+                            <div class="gif-loader" aria-hidden="true">
+                                <div class="liquid-loader">
+                                    <span class="liquid-drop"></span>
+                                    <span class="liquid-drop"></span>
+                                    <span class="liquid-drop"></span>
+                                    <span class="loader-label">Loading world</span>
                                 </div>
                             </div>
+                            <video class="generated-world-gif" autoplay muted loop playsinline preload="metadata" aria-label="Animated rendering of wildfire smoke on a mountain slope">
+                                <source src="./src/videos/smoke_fire.mp4" type="video/mp4">
+                            </video>
                         </div>
-
-                        <div class="video-gallery-item">
-                            <div class="image-video-pair" style="justify-content: center;">
-                                
-                                <div class="video-container">
-                                    <video preload="none" controls="" muted="" loop="" autoplay="">
-                                        <source data-src="./src/videos/smoke_fire.mp4" type="video/mp4">
-                                    </video>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </figure>
                 </div>
             </div>
         </section>
-        <br>
-        <br>
-        <br>
+
+        <section id="gui-demo" class="explore-world-section scroll-mt-24">
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-6 md:mb-8 text-center text-gray-900">Explore Generated Worlds Yourself</h2>
+            <p>
+                Load our saved Gaussian worlds directly in the browser and explore them in real time,
+                with rendering performed on the viewer's device.
+            </p>
+            <div class="splat-viewer-shell" aria-label="Interactive 4D Gaussian world viewer">
+                <iframe
+                    class="splat-viewer-frame"
+                    src="./src/gaussian-4d/index.html?bundle=../splats/smoke43_4d"
+                    title="Interactive Smoke43 4D Gaussian world viewer"
+                    loading="lazy"
+                    allow="fullscreen"
+                ></iframe>
+            </div>
+            <div class="splat-control-grid" aria-label="Viewer controls">
+                <span><strong>W/A/S/D</strong> move through the Gaussian world.</span>
+                <span><strong>I/J/K/L</strong> look around the generated scene.</span>
+            </div>
+        </section>
+
         <section id="object-centric-motion" class="mb-16 md:mb-24 scroll-mt-24">
             <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">Integration with Object-Centric Motion</h2>
 
-            <div class="flex flex-col gap-8 md:gap-12" style="align-items: center;">
-                <div class="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl flex flex-col" style="width: min(95vw, 640px);">
-                    <div class="rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-6 flex items-center justify-center mx-auto" style="background: transparent; border: none; box-shadow: none; width: 100%;">
-                        <video autoplay="" loop="" muted="" playsinline="" controls="" class="w-full max-w-full h-auto object-contain rounded-xl pointer-events-auto" style="width: 100%;">
-                            <source src="./src/videos/flag.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                    <!-- <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">Large-scale Synthetic Dataset</h3> -->
-                    <p class="text-gray-700 text-base md:text-lg leading-relaxed text-justify">
-                        While LivingWorld primarily models scene-scale environmental dynamics such as water, clouds, and smoke,
-                        it can also incorporate object-centric motion.
-                        Rather than representing all motion within a single field, we align object and environmental motions
-                        in world coordinates by enforcing consistent scale and spatial alignment.
-                        This allows independently modeled motions to be coherently integrated within the same scene,
-                        maintaining consistency across viewpoints and scene expansion.
-                    </p>
+            <figure class="image mb-6 md:mb-8">
+                <figcaption id="object-motion-caption">
+                    While LivingWorld primarily models scene-scale environmental dynamics such as water, clouds, and smoke,
+                    it can also incorporate object-centric motion.
+                    Rather than representing all motion within a single field, we align object and environmental motions
+                    in world coordinates by enforcing consistent scale and spatial alignment.
+                    This allows independently modeled motions to be coherently integrated within the same scene,
+                    maintaining consistency across viewpoints and scene expansion.
+                </figcaption>
+            </figure>
+
+            <div class="w-full flex items-center justify-center">
+                <div class="object-motion-media">
+                    <video autoplay="" loop="" muted="" playsinline="" controls="" class="pointer-events-auto">
+                        <source src="./src/videos/flag.mp4" type="video/mp4">
+                    </video>
                 </div>
             </div>
         </section>
@@ -1176,7 +1812,7 @@
                     
 
                     <!-- Second row of buttons -->
-                    <div class="video-gallery-buttons" id="comparison-scene-buttons">
+                    <!-- <div class="video-gallery-buttons" id="comparison-scene-buttons">
                         <h3>Qualitative Comparison</h3>
                         <br>
                         <button class="scene-button is-primary" data-video-index="0">
@@ -1185,9 +1821,9 @@
                         <button class="scene-button" data-video-index="3">
                             <img src="./src/img/como.png" alt="Scene 2">
                         </button>
-                    </div>
+                    </div> -->
 
-                    <div class="video-gallery-buttons" id="gallery-buttons-nvs">
+                    <!-- <div class="video-gallery-buttons" id="gallery-buttons-nvs">
                         
                         <button class="button is-two-line is-primary" data-video-index="0">
                             Ours vs CogVideoX 
@@ -1196,19 +1832,19 @@
                             Ours vs Tora
                         </button>
                         <button class="button is-two-line" data-video-index="2">
-                            Ours vs Veo3.1
+                            Ours vs Veo 3.1
                         </button>
 
-                    </div>
+                    </div> -->
 
-                    <div class="camera-prompt" style="display:inline-flex; align-items:center; gap:0.35em;">
+                    <!-- <div class="camera-prompt" style="display:inline-flex; align-items:center; gap:0.35em;">
                         <img src="./src/img/trajectory.svg" alt="camera prompt icon" class="prompt-icon" style="width:8em; height:auto; display:inline-block; vertical-align:middle;">
                         <span class="prompt-text">"Pan to the right"</span>
                     </div>
-                    <br>
+                    <br> -->
 
                     <!-- Video gallery carousel with 20 items -->
-                    <div class="video-gallery-carousel" id="gallery-carousel-nvs">
+                    <!-- <div class="video-gallery-carousel" id="gallery-carousel-nvs">
                         <div class="video-gallery-item active">
 
                             <video preload="none" controls="" muted="" loop="" height="100%" autoplay="">
@@ -1234,7 +1870,7 @@
                             </video>
                             <div class="video-caption">
                                 <div class="caption-left">Ours</div>
-                                <div class="caption-right">Veo3.1</div>
+                                <div class="caption-right">Veo 3.1</div>
                             </div>
                         </div>
 
@@ -1262,12 +1898,12 @@
                             </video>
                             <div class="video-caption">
                                 <div class="caption-left">Ours</div>
-                                <div class="caption-right">Veo3.1</div>
+                                <div class="caption-right">Veo 3.1</div>
                             </div>
                         </div>
 
              
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </section>
@@ -1316,36 +1952,52 @@
                     <text class="radar-center-ci" x="220" y="245">(± 1.30)</text>
                 </svg>
             </div>
-            <figure class="survey-form-wrap">
+            <!-- <figure class="survey-form-wrap">
                 <img src="./src/img/user_study.png" alt="Interactivity user study survey form" loading="lazy">
                 <figcaption class="survey-form-caption">Survey form distributed to participants in the interactivity user study.</figcaption>
-            </figure>
+            </figure> -->
         </section>
         <br>
 
-        <section id="gui-demo" class="mb-8 md:mb-12">
-            <h2 class="text-2xl md:text-3xl font-extrabold mb-8 md:mb-12 text-center text-gray-900">GUI Demo</h2>
-            <div class="w-full bg-white rounded-2xl md:rounded-3xl mb-4 md:mb-6 shadow-lg border border-gray-100 p-3 md:p-5 flex items-center justify-center">
-                <video autoplay loop muted playsinline class="w-full h-auto object-contain rounded-lg md:rounded-xl">
-                    <source src="./src/videos/GUI.mp4" type="video/mp4">
-                </video>
-            </div>
-        </section>
-
         <section class="mb-12">
-            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-900">Citation</h2>
-            <div class="bg-gray-900 p-6 md:p-8 rounded-2xl shadow-xl relative group">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-900 text-center">Citation</h2>
+            <div class="bg-gray-900 p-6 md:p-8 rounded-2xl shadow-xl relative group max-w-4xl mx-auto text-left">
                 <button onclick="copyBib()" id="copyBtn" class="absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded transition opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100">Copy</button>
                 <pre><code id="bibText" class="text-xs md:text-sm text-gray-300 font-mono leading-relaxed overflow-x-auto block">@article{mun2026livingworld,
                 title={LivingWorld: Interactive 4D World Generation with Environmental Dynamics},
                 author={Mun, Hyeongju and Jin, In-Hwan and Kim, Sohyeong and Kong, Kyeongbo},
-                journal={arXiv preprint arXiv:2604.01641},
+                journal={European Conference on Computer Vision},
                 year={2026}
                 }</code></pre>
             </div>
         </section>
 
     </div>
+
+    <!-- Acknowledgements — styled after the CHORD reference page footer -->
+    <footer class="ack-footer">
+        <div class="ack-container">
+            <h3 class="ack-title">Acknowledgements</h3>
+            <div class="ack-content">
+                <p>
+                    Big thanks to the authors of <a href="https://github.com/KovenYu/WonderWorld">WonderWorld</a>. This codebase is built upon WonderWorld, which provides the baseline framework for interactive 3D scene generation from a single image.
+                </p>
+                <p>
+                    Website template modified from <a href="https://nerfies.github.io/">NeRFies</a>, <a href="https://www.cs.columbia.edu/~huy/scalingup/">Scaling Up Distilling Down</a>, <a href="https://umi-on-legs.github.io/">UMI on Legs</a>, and <a href="https://chen-geng.com/rose4d">Birth and Death of a Rose</a>.
+                </p>
+                <p>
+                    This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                    Commons Attribution-ShareAlike 4.0 International License</a>.
+                </p>
+                <p>
+                    This means you are free to borrow and modify the <a href="https://github.com/nerfies/nerfies.github.io">source
+                    code</a> of this website as long as you link back to the <a href="https://nerfies.github.io/">NeRFies</a> page in the footer.
+                    Please remember to remove the analytics code included in the header of the website which
+                    you do not want on your website.
+                </p>
+            </div>
+        </div>
+    </footer>
 
     <script>
     function toggleMobileMenu() {
@@ -1363,15 +2015,31 @@
         toggleText.textContent = abstractContent.classList.contains('expanded') ? 'Show less' : 'Show more';
     }
     function copyBib() {
-        const bib = document.getElementById('bibtex-content').innerText;
-        navigator.clipboard.writeText(bib).then(() => {
-            const btn = document.querySelector('.copy-btn');
+        const bib = document.getElementById('bibText').innerText;
+        const btn = document.getElementById('copyBtn');
+        const markCopied = () => {
             const original = btn.innerHTML;
             btn.innerHTML = 'Copied!';
             setTimeout(() => {
                 btn.innerHTML = original;
             }, 1500);
-        });
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(bib).then(markCopied);
+            return;
+        }
+
+        const textarea = document.createElement('textarea');
+        textarea.value = bib;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        markCopied();
     }
 
     // === world image <-> teaser video sequence ===
@@ -1765,7 +2433,7 @@
             slides: [
                 { title: "CogVideoX", video: "./src/videos/alpine/cog_ours.mp4", desc: "CogVideoX on Scene 01." },
                 { title: "Tora", video: "./src/videos/alpine/Tora_ours.mp4", desc: "Tora on Scene 01." },
-                { title: "Veo3.1", video: "./src/videos/alpine/veo_ours.mp4", desc: "Veo3.1 on Scene 01." }
+                { title: "Veo 3.1", video: "./src/videos/alpine/veo_ours.mp4", desc: "Veo 3.1 on Scene 01." }
             ]
         },
         {
@@ -1773,7 +2441,7 @@
             slides: [
                 { title: "CogVideoX", video: "./src/videos/como/cog_ours.mp4", desc: "CogVideoX on Scene 02." },
                 { title: "Tora", video: "./src/videos/como/Tora_ours.mp4", desc: "Tora on Scene 02." },
-                { title: "Veo3.1", video: "./src/videos/como/veo_ours.mp4", desc: "Veo3.1 on Scene 02." }
+                { title: "Veo 3.1", video: "./src/videos/como/veo_ours.mp4", desc: "Veo 3.1 on Scene 02." }
             ]
         }
         // scene 10까지 계속 추가
@@ -1928,63 +2596,279 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const resultsSection = document.querySelector("#results-section");
-            if (!resultsSection) return;
+            const initVideoGallery = (sectionSelector, buttonsSelector, itemsSelector) => {
+                const section = document.querySelector(sectionSelector);
+                if (!section) return;
 
-            const buttons = resultsSection.querySelectorAll("#gallery-buttons-results .scene-button");
-            const items = resultsSection.querySelectorAll("#gallery-carousel-results .video-gallery-item");
+                const buttons = section.querySelectorAll(buttonsSelector);
+                const items = section.querySelectorAll(itemsSelector);
+                if (!buttons.length || !items.length) return;
 
-            const activateResultScene = async (index, targetButton = null) => {
-                const activeItem = items[index];
-                if (!activeItem) return;
+                const prevButton = section.querySelector("[data-gallery-prev]");
+                const nextButton = section.querySelector("[data-gallery-next]");
+                const dotsContainer = section.querySelector("[data-gallery-dots]");
+                let currentIndex = 0;
 
-                items.forEach((item) => {
-                    item.classList.remove("active");
-                    const v = item.querySelector("video");
-                    if (v) {
-                        v.pause();
-                        v.currentTime = 0;
+                const scrollButtonIntoView = (index) => {
+                    const button = buttons[index];
+                    if (!button) return;
+                    button.scrollIntoView({
+                        behavior: "smooth",
+                        inline: "center",
+                        block: "nearest"
+                    });
+                };
+
+                const renderDots = () => {
+                    if (!dotsContainer) return;
+                    dotsContainer.innerHTML = "";
+
+                    buttons.forEach((_, index) => {
+                        const dot = document.createElement("button");
+                        dot.type = "button";
+                        dot.className = "gallery-dot" + (index === currentIndex ? " is-active" : "");
+                        dot.setAttribute("aria-label", `Show scene ${index + 1}`);
+                        dot.addEventListener("click", () => {
+                            activateScene(index, buttons[index]);
+                        });
+                        dotsContainer.appendChild(dot);
+                    });
+                };
+
+                const activateScene = async (index, targetButton = null) => {
+                    const activeItem = items[index];
+                    if (!activeItem) return;
+                    currentIndex = index;
+
+                    items.forEach((item) => {
+                        item.classList.remove("active");
+                        const v = item.querySelector("video");
+                        if (v) {
+                            v.pause();
+                            v.currentTime = 0;
+                        }
+                    });
+
+                    activeItem.classList.add("active");
+
+                    buttons.forEach((btn) => btn.classList.remove("is-primary"));
+                    const buttonToActivate = targetButton || buttons[index];
+                    if (buttonToActivate) {
+                        buttonToActivate.classList.add("is-primary");
                     }
+                    scrollButtonIntoView(index);
+                    renderDots();
+
+                    const video = activeItem.querySelector("video");
+                    const source = activeItem.querySelector("source");
+
+                    if (video && source && source.dataset.src && !source.getAttribute("src")) {
+                        source.setAttribute("src", source.dataset.src);
+                        video.load();
+                    }
+
+                    if (video) {
+                        video.muted = true;
+                        video.playsInline = true;
+                        try {
+                            await video.play();
+                        } catch (e) {
+                            console.log("Autoplay failed:", e);
+                        }
+                    }
+                };
+
+                buttons.forEach((button) => {
+                    button.addEventListener("click", async function () {
+                        const index = Number(this.dataset.videoIndex);
+                        await activateScene(index, this);
+                    });
                 });
 
-                activeItem.classList.add("active");
-
-                buttons.forEach((btn) => btn.classList.remove("is-primary"));
-                const buttonToActivate = targetButton || buttons[index];
-                if (buttonToActivate) {
-                    buttonToActivate.classList.add("is-primary");
+                if (prevButton) {
+                    prevButton.addEventListener("click", () => {
+                        const nextIndex = (currentIndex - 1 + items.length) % items.length;
+                        activateScene(nextIndex, buttons[nextIndex]);
+                    });
                 }
 
-                const video = activeItem.querySelector("video");
-                const source = activeItem.querySelector("source");
-
-                if (video && source && source.dataset.src && !source.getAttribute("src")) {
-                    source.setAttribute("src", source.dataset.src);
-                    video.load();
+                if (nextButton) {
+                    nextButton.addEventListener("click", () => {
+                        const nextIndex = (currentIndex + 1) % items.length;
+                        activateScene(nextIndex, buttons[nextIndex]);
+                    });
                 }
 
-                if (video) {
-                    video.muted = true;
-                    video.playsInline = true;
-                    try {
-                        await video.play();
-                    } catch (e) {
-                        console.log("Autoplay failed:", e);
-                    }
+                const initialButton = section.querySelector(`${buttonsSelector}.is-primary`) || buttons[0];
+                const initialIndex = Number(initialButton.dataset.videoIndex || 0);
+                activateScene(initialIndex, initialButton);
+            };
+
+            initVideoGallery(
+                "#interactive-scene-generation",
+                "#interactive-scene-buttons .scene-button",
+                "#interactive-scene-carousel .video-gallery-item"
+            );
+            initVideoGallery(
+                "#results-section",
+                "#gallery-buttons-results .scene-button",
+                "#gallery-carousel-results .video-gallery-item"
+            );
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const playSilently = (video) => {
+                if (!video) return;
+                video.muted = true;
+                video.playsInline = true;
+                const promise = video.play();
+                if (promise && typeof promise.catch === "function") {
+                    promise.catch(() => {});
                 }
             };
 
-            buttons.forEach((button) => {
-                button.addEventListener("click", async function () {
-                    const index = Number(this.dataset.videoIndex);
-                    await activateResultScene(index, this);
-                });
+            document.querySelectorAll(".hero-bg-video, .interactive-peek-card video").forEach(playSilently);
+
+            document.querySelectorAll(".generated-world-gif").forEach((el) => {
+                const media = el.closest(".generated-world-media");
+                if (!media) return;
+
+                const markLoaded = () => {
+                    media.classList.remove("is-loading");
+                    media.classList.add("is-loaded");
+                };
+
+                if (el.tagName === "VIDEO") {
+                    if (el.readyState >= 2) {
+                        markLoaded();
+                    } else {
+                        el.addEventListener("loadeddata", markLoaded, { once: true });
+                        el.addEventListener("error", markLoaded, { once: true });
+                    }
+                    playSilently(el);
+                    return;
+                }
+
+                if (el.complete && el.naturalWidth > 0) {
+                    markLoaded();
+                    return;
+                }
+
+                el.addEventListener("load", markLoaded, { once: true });
+                el.addEventListener("error", markLoaded, { once: true });
             });
 
-            const initialButton = resultsSection.querySelector("#gallery-buttons-results .scene-button.is-primary") || buttons[0];
-            if (initialButton) {
-                const initialIndex = Number(initialButton.dataset.videoIndex || 0);
-                activateResultScene(initialIndex, initialButton);
+            const track = document.getElementById("interactive-peek-track");
+            if (track) {
+                const cards = Array.from(track.querySelectorAll(".interactive-peek-card"));
+                const prevButton = document.querySelector("[data-peek-prev]");
+                const nextButton = document.querySelector("[data-peek-next]");
+                const dotsContainer = document.querySelector("[data-peek-dots]");
+                const initialActiveIndex = Math.max(0, cards.findIndex((card) => card.classList.contains("is-active")));
+                let currentIndex = initialActiveIndex;
+                let scrollTimer = null;
+
+                const renderDots = () => {
+                    if (!dotsContainer) return;
+                    dotsContainer.innerHTML = "";
+                    cards.forEach((_, index) => {
+                        const dot = document.createElement("button");
+                        dot.type = "button";
+                        dot.className = "gallery-dot" + (index === currentIndex ? " is-active" : "");
+                        dot.setAttribute("aria-label", `Show scene ${index + 1}`);
+                        dot.addEventListener("click", () => setActive(index, true));
+                        dotsContainer.appendChild(dot);
+                    });
+                };
+
+                const setActive = (index, shouldScroll = false) => {
+                    if (!cards.length) return;
+                    currentIndex = (index + cards.length) % cards.length;
+                    cards.forEach((card, cardIndex) => {
+                        card.classList.toggle("is-active", cardIndex === currentIndex);
+                    });
+                    renderDots();
+                    playSilently(cards[currentIndex].querySelector("video"));
+                    if (shouldScroll) {
+                        cards[currentIndex].scrollIntoView({
+                            behavior: "smooth",
+                            inline: "center",
+                            block: "nearest"
+                        });
+                    }
+                };
+
+                const updateActiveFromScroll = () => {
+                    const trackRect = track.getBoundingClientRect();
+                    const trackCenter = trackRect.left + trackRect.width / 2;
+                    let nearestIndex = currentIndex;
+                    let nearestDistance = Infinity;
+
+                    cards.forEach((card, index) => {
+                        const rect = card.getBoundingClientRect();
+                        const distance = Math.abs(rect.left + rect.width / 2 - trackCenter);
+                        if (distance < nearestDistance) {
+                            nearestDistance = distance;
+                            nearestIndex = index;
+                        }
+                    });
+
+                    if (nearestIndex !== currentIndex) {
+                        setActive(nearestIndex, false);
+                    }
+                };
+
+                track.addEventListener("scroll", () => {
+                    if (scrollTimer) window.clearTimeout(scrollTimer);
+                    scrollTimer = window.setTimeout(updateActiveFromScroll, 80);
+                });
+
+                if (prevButton) {
+                    prevButton.addEventListener("click", () => setActive(currentIndex - 1, true));
+                }
+
+                if (nextButton) {
+                    nextButton.addEventListener("click", () => setActive(currentIndex + 1, true));
+                }
+
+                setActive(initialActiveIndex, false);
+                window.setTimeout(() => setActive(initialActiveIndex, true), 0);
+            }
+
+            const growCards = Array.from(document.querySelectorAll(".scroll-grow-card"));
+            if (growCards.length) {
+                let ticking = false;
+
+                const updateGrowCards = () => {
+                    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+                    const focusCenter = viewportHeight * 0.54;
+                    const falloff = viewportHeight * 0.74;
+
+                    growCards.forEach((card) => {
+                        const rect = card.getBoundingClientRect();
+                        const cardCenter = rect.top + rect.height / 2;
+                        const distance = Math.min(1, Math.abs(cardCenter - focusCenter) / falloff);
+                        const focus = 1 - distance;
+                        const scale = 0.88 + focus * 0.12;
+                        const opacity = 0.72 + focus * 0.28;
+                        card.style.setProperty("--scroll-scale", scale.toFixed(3));
+                        card.style.setProperty("--scroll-opacity", opacity.toFixed(3));
+                    });
+
+                    ticking = false;
+                };
+
+                const requestGrowUpdate = () => {
+                    if (ticking) return;
+                    ticking = true;
+                    window.requestAnimationFrame(updateGrowCards);
+                };
+
+                window.addEventListener("scroll", requestGrowUpdate, { passive: true });
+                window.addEventListener("resize", requestGrowUpdate);
+                updateGrowCards();
             }
         });
     </script>
@@ -2059,5 +2943,29 @@
                 }
             }
         });
+    </script>
+    <script>
+        function fitProjectTitle() {
+            const title = document.querySelector(".project-title");
+            if (!title) return;
+
+            title.style.fontSize = "";
+            const lines = Array.from(title.querySelectorAll(".project-title-line"));
+            if (!lines.length) return;
+
+            const availableWidth = title.clientWidth;
+            const widestLine = Math.max(...lines.map((line) => line.scrollWidth));
+            if (widestLine <= availableWidth) return;
+
+            const currentSize = parseFloat(window.getComputedStyle(title).fontSize);
+            const nextSize = Math.max(8, Math.floor((currentSize * availableWidth / widestLine) * 100) / 100);
+            title.style.fontSize = nextSize + "px";
+        }
+
+        window.addEventListener("resize", fitProjectTitle);
+        document.addEventListener("DOMContentLoaded", fitProjectTitle);
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(fitProjectTitle);
+        }
     </script>
 </body></html>
