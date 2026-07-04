@@ -3,6 +3,18 @@
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LivingWorld</title>
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        window.addEventListener('DOMContentLoaded', () => {
+            window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        });
+        window.addEventListener('load', () => {
+            window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        });
+    </script>
     <script src="./src/saved_resource"></script>
     <link href="./src/css2" rel="stylesheet">
     <link rel="stylesheet" href="./src/video-gallery.css">
@@ -2635,7 +2647,7 @@
                     });
                 };
 
-                const activateScene = async (index, targetButton = null) => {
+                const activateScene = async (index, targetButton = null, shouldScroll = true) => {
                     const activeItem = items[index];
                     if (!activeItem) return;
                     currentIndex = index;
@@ -2656,7 +2668,9 @@
                     if (buttonToActivate) {
                         buttonToActivate.classList.add("is-primary");
                     }
-                    scrollButtonIntoView(index);
+                    if (shouldScroll) {
+                        scrollButtonIntoView(index);
+                    }
                     renderDots();
 
                     const video = activeItem.querySelector("video");
@@ -2701,7 +2715,7 @@
 
                 const initialButton = section.querySelector(`${buttonsSelector}.is-primary`) || buttons[0];
                 const initialIndex = Number(initialButton.dataset.videoIndex || 0);
-                activateScene(initialIndex, initialButton);
+                activateScene(initialIndex, initialButton, false);
             };
 
             initVideoGallery(
@@ -2834,7 +2848,15 @@
                 }
 
                 setActive(initialActiveIndex, false);
-                window.setTimeout(() => setActive(initialActiveIndex, true), 0);
+
+                const centerActiveCardInTrack = () => {
+                    const card = cards[currentIndex];
+                    if (!card) return;
+                    const targetLeft = card.offsetLeft - (track.clientWidth - card.clientWidth) / 2;
+                    track.scrollTo({ left: targetLeft, behavior: 'auto' });
+                };
+                centerActiveCardInTrack();
+                window.addEventListener('load', centerActiveCardInTrack);
             }
 
             const growCards = Array.from(document.querySelectorAll(".scroll-grow-card"));
