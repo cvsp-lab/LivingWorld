@@ -9,6 +9,10 @@
 
 *Equal contribution. †Corresponding author.
 
+<p align="center">
+  <video src="hero_page_faithful.mp4" width="720" controls autoplay loop muted playsinline></video>
+</p>
+
 </div>
 
 ## Getting Started
@@ -193,7 +197,7 @@ You would need to prepare the image-caption pairing separately. For real-world e
 @article{mun2026livingworld,
     title={LivingWorld: Interactive 4D World Generation with Environmental Dynamics},
     author={Mun, Hyeongju and Jin, In-Hwan and Kim, Sohyeong and Kong, Kyeongbo},
-    journal={arXiv preprint arXiv:2604.01641},
+    journal={European Conference on Computer Vision},
     year={2026}
 }
 ```
