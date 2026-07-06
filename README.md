@@ -8,11 +8,7 @@
 [Hyeongju Mun](https://www.pnu-cvsp.com/members/hyeong-ju)* · [In-Hwan Jin](https://www.pnu-cvsp.com/members/inhwan)* · [Sohyeong Kim](https://www.pnu-cvsp.com/members/sohyeong) · [Kyeongbo Kong](https://www.pnu-cvsp.com/prof)†
 
 *Equal contribution. †Corresponding author.
-
-<p align="center">
-  <video src="hero_page_faithful.mp4" width="720" controls autoplay loop muted playsinline></video>
-</p>
-
+<video src="https://github.com/user-attachments/assets/a9ad73b6-2b9c-4223-a6a3-55bcdc1e7c54" width="720" controls autoplay loop muted playsinline></video>
 </div>
 
 ## Getting Started
