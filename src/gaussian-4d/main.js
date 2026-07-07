@@ -958,6 +958,12 @@ async function main() {
         antialias: false,
     });
 
+    if (!gl) {
+        const err = new Error("WebGL2 unavailable");
+        err.code = "WEBGL2_UNAVAILABLE";
+        throw err;
+    }
+
     const vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, vertexShaderSource);
     gl.compileShader(vertexShader);
@@ -1472,5 +1478,51 @@ async function main() {
 
 main().catch((err) => {
     document.getElementById("spinner").style.display = "none";
-    document.getElementById("message").innerText = err.toString();
+    const message = document.getElementById("message");
+    if (err && err.code === "WEBGL2_UNAVAILABLE") {
+        const ua = navigator.userAgent;
+        const isFirefox = /Firefox/i.test(ua);
+        const isSafari = /Safari/i.test(ua) && !/Chrome|Chromium|Edg|OPR/i.test(ua);
+        let instructions;
+        if (isFirefox) {
+            instructions = `
+                <p style="margin:0 0 .35rem;"><strong>Fix in Firefox:</strong></p>
+                <ol style="margin:0 0 .75rem 1.2rem;padding:0;">
+                    <li>Open <code>about:preferences</code>, scroll to <em>Performance</em></li>
+                    <li>Uncheck <em>&ldquo;Use recommended performance settings&rdquo;</em>, then enable <em>&ldquo;Use hardware acceleration when available&rdquo;</em></li>
+                    <li>Restart Firefox and reload this page</li>
+                </ol>
+                <p style="margin:0;font-size:.9rem;opacity:.85;">Still failing? Open <code>about:support</code> and check the <em>Graphics</em> section, or try a recent Chrome / Edge.</p>
+            `;
+        } else if (isSafari) {
+            instructions = `
+                <p style="margin:0 0 .35rem;"><strong>Fix in Safari:</strong></p>
+                <ol style="margin:0 0 .75rem 1.2rem;padding:0;">
+                    <li>Update macOS and Safari to a recent version (WebGL2 requires Safari 15 / macOS Monterey or newer)</li>
+                    <li>Safari &rarr; Settings &rarr; Advanced &rarr; enable <em>&ldquo;Show features for web developers&rdquo;</em></li>
+                    <li>Develop menu &rarr; Feature Flags (or Experimental Features) &rarr; ensure <em>WebGL 2.0</em> is on</li>
+                </ol>
+                <p style="margin:0;font-size:.9rem;opacity:.85;">Or try the latest Chrome / Edge on this device for the smoothest experience.</p>
+            `;
+        } else {
+            instructions = `
+                <p style="margin:0 0 .35rem;"><strong>Fix in Chrome / Edge / other Chromium browsers:</strong></p>
+                <ol style="margin:0 0 .75rem 1.2rem;padding:0;">
+                    <li>Open <code>chrome://settings/system</code> in a new tab</li>
+                    <li>Turn on <em>&ldquo;Use hardware acceleration when available&rdquo;</em></li>
+                    <li>Fully quit and reopen the browser, then reload this page</li>
+                </ol>
+                <p style="margin:0;font-size:.9rem;opacity:.85;">Still failing? Check <code>chrome://gpu</code> &mdash; <em>WebGL2</em> should read <em>&ldquo;Hardware accelerated&rdquo;</em>.</p>
+            `;
+        }
+        message.innerHTML = `
+            <div style="max-width:560px;line-height:1.55;color:#7f1d1d;pointer-events:auto;user-select:text;font-family:system-ui,-apple-system,sans-serif;text-align:left;">
+                <h3 style="margin:0 0 .6rem;font-size:1.15rem;text-align:center;">Interactive viewer unavailable</h3>
+                <p style="margin:0 0 .75rem;text-align:center;">Your browser could not create a WebGL2 context, so the 4D world cannot be rendered here.</p>
+                ${instructions}
+            </div>
+        `;
+    } else {
+        message.innerText = err.toString();
+    }
 });
